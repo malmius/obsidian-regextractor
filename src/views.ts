@@ -21,4 +21,14 @@ export class RegexExtractorView extends ItemView {
         return 'Displays Regex Extracts';
     }
 
+    protected async onOpen(): Promise<void> {
+        this.drawTestContent(this.contentEl); // Wenn man hier containerEl nimmt anstatt contentEl, ist es auf gleicher Höhe mit den anderen und verschwindet.
+    }
+
+    protected async drawTestContent(viewContent: Element) {
+        const testDiv = createDiv('testDiv');
+        testDiv.innerHTML = 'HALLO WELT.';
+        viewContent.appendChild(testDiv);
+    }
+
 }
