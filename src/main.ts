@@ -1,7 +1,9 @@
 import { App, Editor, MarkdownView, Notice, Plugin } from 'obsidian';
 
 import { RegexEctractorPluginSettingsTab, RegexEctractorPluginSettings, DEFAULT_SETTINGS } from './settings'
+import { RegexExtractorView } from './views';
 
+export const VIEW_TYPE = 'regex-display';
 
 // Remember to rename these classes and interfaces!
 
@@ -18,9 +20,12 @@ export default class RegexExtractorPlugin extends Plugin {
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Regex Extractor Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
 			new Notice('This should open the Regex Extractor View');
+			this.activateView();
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
+
+		this.registerView(VIEW_TYPE, (leaf) => new RegexExtractorView(leaf, this));
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
@@ -76,5 +81,16 @@ export default class RegexExtractorPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	private async activateView() {
+		if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length) {
+			const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0];
+			this.app.workspace.revealLeaf(leaf);
+		} else {
+			const leaf = this.app.workspace.getRightLeaf(false);
+			await leaf.setViewState({ type: VIEW_TYPE, active: true });
+			this.app.workspace.revealLeaf(leaf);
+		}
 	}
 }
