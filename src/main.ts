@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin } from 'obsidian';
+import { App, Editor, MarkdownView, Notice, Plugin } from 'obsidian';
 
 import { RegexEctractorPluginSettingsTab, RegexEctractorPluginSettings, DEFAULT_SETTINGS } from './settings'
 
@@ -15,9 +15,9 @@ export default class RegexExtractorPlugin extends Plugin {
 		this.addSettingTab(new RegexEctractorPluginSettingsTab(this.app, this));
 
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
+		const ribbonIconEl = this.addRibbonIcon('dice', 'Regex Extractor Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+			new Notice('This should open the Regex Extractor View');
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
@@ -26,14 +26,6 @@ export default class RegexExtractorPlugin extends Plugin {
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText('Status Bar Text');
 
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
 			id: 'sample-editor-command',
@@ -54,7 +46,8 @@ export default class RegexExtractorPlugin extends Plugin {
 					// If checking is true, we're simply "checking" if the command can be run.
 					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
-						new SampleModal(this.app).open();
+						console.log('executes something')
+						//new SampleModal(this.app).open();
 					}
 
 					// This command will only show up in Command Palette when the check function returns true
@@ -85,20 +78,3 @@ export default class RegexExtractorPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 }
-
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
-
