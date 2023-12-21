@@ -26,6 +26,8 @@ export class RegexExtractorView extends ItemView {
         this.drawDataviewContent(this.contentEl);
         this.drawTestContent(this.contentEl); // Wenn man hier containerEl nimmt anstatt contentEl, ist es auf gleicher Höhe mit den anderen und verschwindet.
         console.log(this.getLineInEditor(0));
+        console.log('scroll to line');
+        this.goToLineInEditor(30);
     }
 
     // Beispiel Menü-Item
@@ -85,6 +87,15 @@ export class RegexExtractorView extends ItemView {
         return 'no line';
     }
 
+    goToLineInEditor(linenumber: number) {
+        // Der Editor existiert nur, wenn der Fokus auf dem Editor / VIew ist und nicht, wenn der Fokus z.B. auf der Seitenleiste ist.
+        const editor = app.workspace.activeEditor?.editor;
+        console.log('editor:');
+        console.log(editor);
+        if (editor) {
+            editor.scrollTo(linenumber);
+        }
+    }
 
     async goToLine(editor: Editor, operations: EditorSelectionOrCaret[]) {
             const lastLine = editor.lastLine();
