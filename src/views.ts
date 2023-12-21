@@ -1,4 +1,4 @@
-import { WorkspaceLeaf, ItemView, Menu, getIcon, Notice, setIcon } from "obsidian";
+import { WorkspaceLeaf, ItemView, Editor } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { DataviewParser, FieldsParser } from "./parser";
 import { VIEW_TYPES } from './constants';
@@ -25,6 +25,7 @@ export class RegexExtractorView extends ItemView {
     protected async onOpen(): Promise<void> {
         this.drawDataviewContent(this.contentEl);
         this.drawTestContent(this.contentEl); // Wenn man hier containerEl nimmt anstatt contentEl, ist es auf gleicher Höhe mit den anderen und verschwindet.
+        console.log(this.getLineInEditor(0));
     }
 
     // Beispiel Menü-Item
@@ -70,6 +71,30 @@ export class RegexExtractorView extends ItemView {
         const fieldsDiv = createDiv('fieldsDiv');
         fieldsDiv.innerHTML = fieldsMatches.join(',');
         viewContent.appendChild(fieldsDiv);
+    }
+
+    getLineInEditor(linenumber: number): string {
+        // Der Editor existiert nur, wenn der Fokus auf dem Editor / VIew ist und nicht, wenn der Fokus z.B. auf der Seitenleiste ist.
+        const editor = app.workspace.activeEditor?.editor;
+        console.log('editor:');
+        console.log(editor);
+        if (editor) {
+            console.log('get line from editor:')
+            return editor.getLine(linenumber);
+        }
+        return 'no line';
+    }
+
+
+    async goToLine(editor: Editor, operations: EditorSelectionOrCaret[]) {
+            const lastLine = editor.lastLine();
+            const pastEnd = operations.find(op => op.anchor.line > lastLine)
+            if (pastEnd != undefined) {
+                const lastChar = editor.getLine(lastLine).length
+                editor.setSelection({line: lastLine, ch: lastChar});
+                editor.exec("newlineAndIndent");
+            }
+        editor.setSelections(operations);
     }
 
 }
