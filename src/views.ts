@@ -64,13 +64,12 @@ export class RegexExtractorView extends ItemView {
 
 
         const fieldsParser = new FieldsParser(this.plugin);
-        const fieldsMatches = fieldsParser.returnFieldMatches();
+        const fieldsMatches = await fieldsParser.parseFields();
         console.log(fieldsMatches);
 
         const fieldsDiv = createDiv('fieldsDiv');
-        fieldsDiv.innerHTML = fieldsMatches.toString();
+        fieldsDiv.innerHTML = fieldsMatches.join(',');
         viewContent.appendChild(fieldsDiv);
-
     }
 
 }

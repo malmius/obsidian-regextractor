@@ -1,5 +1,5 @@
 import RegexExtractorPlugin from "./main";
-import { VIEW_TYPES } from './constants';
+import { VIEW_TYPES, REGEX_EXPRESSIONS } from './constants';
 import { getAPI, Values } from "obsidian-dataview";
 
 abstract class Parser {
@@ -48,30 +48,51 @@ export class FieldsParser extends Parser {
         this.dataviewAPI = getAPI(plugin.app);
     }
 
-    returnFieldMatches(): string[] {
-        const fieldsInBrackets = "\\((\\w+)::(.*?)\\)";
-        const matches = new RegExp(fieldsInBrackets, "m");
-        const matchingLines = [];
+    async getActiveFileLines(): Promise<string[]> {
+        const activeFile = this.plugin.app.workspace.getActiveFile();
+        let lines: string[] = [];
+        if (activeFile) {
+            const activeFileContent = await this.plugin.app.vault.cachedRead(activeFile);
+            if (activeFileContent) {
+                lines = activeFileContent.split("\n");
+            }
+        }
+        return lines;
+    }
+
+    returnFieldMatches(lines: string[]): RegexExtract[] {
+        const matches = new RegExp(REGEX_EXPRESSIONS.FIELDS_ROUNDBRACKETS, "m");
+        const extracts: RegexExtract[] = [];
         
-        // const lines: string[] = fileContent.split("\n");
-        const lines = ["Baumhaus (Begriff:: Haus am see) gugus gebliben.", "und dann ist da ochdas [theater:: jgriegjpqerg] jrep (test:: gqjipr) jihtj."];
         for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
             const line = lines[i]; // current line
             if (matches.test(line)) {
-                matchingLines.push(line);
+                const newExtract = new RegexExtract(i, line);
+                extracts.push(newExtract);
             }
         }
-        return matchingLines;
+        return extracts;
+    }
+
+    async parseFields(): Promise<RegexExtract[]> {
+        const fileLines = await this.getActiveFileLines();
+        const parsedExtracts = this.returnFieldMatches(fileLines);
+        console.log(parsedExtracts);
+
+        return parsedExtracts;
     }
 }
 
 class RegexExtract {
     lineNumber: number;
-    parsedGroups: string[];
-    tags: string[]
+    parsedContent: string;
 
-    constructor(lineNumber: number, parsedGroups: string[]) {
+    constructor(lineNumber: number, parsedContent: string) {
         this.lineNumber = lineNumber;
-        this.parsedGroups = parsedGroups;
+        this.parsedContent = parsedContent;
+    }
+
+    toString() {
+        return `linenumber: ${this.lineNumber}, content: ${this.parsedContent}`
     }
 }
