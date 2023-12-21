@@ -1,7 +1,8 @@
 import { WorkspaceLeaf, ItemView, Menu, getIcon, Notice, setIcon } from "obsidian";
+import RegexExtractorPlugin from "./main";
+import { DataviewParser } from "./parser";
 import { VIEW_TYPES } from './constants';
 
-import RegexExtractorPlugin from "./main";
 //import { t } from "./lang/helper"
 
 export class RegexExtractorView extends ItemView {
@@ -43,6 +44,9 @@ export class RegexExtractorView extends ItemView {
         const testDiv = createDiv('testDiv');
         testDiv.innerHTML = 'HALLO WELT.';
         viewContent.appendChild(testDiv);
+
+        const dataviewParser = new DataviewParser(this.plugin);
+        dataviewParser.returnDataviewFieldNames();
     }
 
 }
