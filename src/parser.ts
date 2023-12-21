@@ -40,6 +40,31 @@ export class DataviewParser extends Parser {
     }
 }
 
+export class FieldsParser extends Parser {
+    dataviewAPI;
+
+	constructor(plugin: RegexExtractorPlugin) {
+		super(plugin);
+        this.dataviewAPI = getAPI(plugin.app);
+    }
+
+    returnFieldMatches(): string[] {
+        const fieldsInBrackets = "\\((\\w+)::(.*?)\\)";
+        const matches = new RegExp(fieldsInBrackets, "m");
+        const matchingLines = [];
+        
+        // const lines: string[] = fileContent.split("\n");
+        const lines = ["Baumhaus (Begriff:: Haus am see) gugus gebliben.", "und dann ist da ochdas [theater:: jgriegjpqerg] jrep (test:: gqjipr) jihtj."];
+        for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
+            const line = lines[i]; // current line
+            if (matches.test(line)) {
+                matchingLines.push(line);
+            }
+        }
+        return matchingLines;
+    }
+}
+
 class RegexExtract {
     lineNumber: number;
     parsedGroups: string[];
