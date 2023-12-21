@@ -1,7 +1,7 @@
 import { WorkspaceLeaf, ItemView, Menu, getIcon, Notice, setIcon } from "obsidian";
+import { VIEW_TYPES } from './constants';
 
 import RegexExtractorPlugin from "./main";
-import { VIEW_TYPE } from "./main";
 //import { t } from "./lang/helper"
 
 export class RegexExtractorView extends ItemView {
@@ -14,7 +14,7 @@ export class RegexExtractorView extends ItemView {
 	}
 
     getViewType(): string {
-        return VIEW_TYPE;
+        return VIEW_TYPES.DEFAULT_VIEW;
     }
 
     getDisplayText(): string {
@@ -23,6 +23,20 @@ export class RegexExtractorView extends ItemView {
 
     protected async onOpen(): Promise<void> {
         this.drawTestContent(this.contentEl); // Wenn man hier containerEl nimmt anstatt contentEl, ist es auf gleicher Höhe mit den anderen und verschwindet.
+    }
+
+    // Beispiel Menü-Item
+    // public onPaneMenu(menu: Menu): void {
+	// 	menu.addItem((item) => {
+	// 		item.setTitle("CLOSE")
+	// 			.setIcon("cross")
+	// 			.onClick(() => {
+	// 				this.app.workspace.detachLeavesOfType(VIEW_TYPES.DEFAULT_VIEW);
+	// 			});
+	// 	});
+	// }
+
+    onload(): void {
     }
 
     protected async drawTestContent(viewContent: Element) {
