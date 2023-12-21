@@ -23,6 +23,7 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected async onOpen(): Promise<void> {
+        this.drawDataviewContent(this.contentEl);
         this.drawTestContent(this.contentEl); // Wenn man hier containerEl nimmt anstatt contentEl, ist es auf gleicher Höhe mit den anderen und verschwindet.
     }
 
@@ -47,6 +48,20 @@ export class RegexExtractorView extends ItemView {
 
         const dataviewParser = new DataviewParser(this.plugin);
         dataviewParser.returnDataviewFieldNames();
+    }
+
+    protected async drawDataviewContent(viewContent: Element) {
+        const dataviewParser = new DataviewParser(this.plugin);
+        const dataViewFieldsArray = dataviewParser.returnDataviewFieldNames();
+        let htmlLinks = '';
+        for (let i = 0; i < dataViewFieldsArray.length; i++) {
+            htmlLinks += '<a href="' + dataViewFieldsArray[i] + '">' + dataViewFieldsArray[i] + '</a><br>';
+        }
+
+        const testDiv = createDiv('dataviewfields');
+        testDiv.innerHTML = htmlLinks;
+        viewContent.appendChild(testDiv);
+        
     }
 
 }

@@ -30,11 +30,13 @@ export class DataviewParser extends Parser {
         console.log('printing dataview API');
         console.log(this.dataviewAPI);
         const field = this.dataviewAPI.page(activeFile?.name);
+        const dataViewFieldsArray = [];
         for (const fieldName of Object.keys(field)) {
             console.log(fieldName);
+            dataViewFieldsArray.push(fieldName);
         }
         console.log(field);
-        return [''];
+        return dataViewFieldsArray;
     }
 }
 
