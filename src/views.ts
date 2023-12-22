@@ -23,11 +23,9 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected async onOpen(): Promise<void> {
-        this.drawDataviewContent(this.contentEl);
-        this.drawTestContent(this.contentEl); // Wenn man hier containerEl nimmt anstatt contentEl, ist es auf gleicher Höhe mit den anderen und verschwindet.
-        console.log(this.getLineInEditor(0));
-        console.log('scroll to line');
-        this.goToLineInEditor(30);
+        this.drawDataviewFields(this.contentEl); 
+        this.drawParsedContentTable(this.contentEl);
+        // this.drawDataviewContent(this.contentEl);
     }
 
     // Beispiel Menü-Item
@@ -44,30 +42,10 @@ export class RegexExtractorView extends ItemView {
     onload(): void {
     }
 
-    protected async drawTestContent(viewContent: Element) {
-        const testDiv = createDiv('testDiv');
-        testDiv.innerHTML = 'HALLO WELT.';
-        viewContent.appendChild(testDiv);
-
-        const dataviewParser = new DataviewParser(this.plugin);
-        dataviewParser.returnDataviewFieldNames();
-    }
-
-    protected async drawDataviewContent(viewContent: Element) {
-        const dataviewParser = new DataviewParser(this.plugin);
-        const dataViewFieldsArray = dataviewParser.returnDataviewFieldNames();
-        let htmlLinks = '';
-        for (let i = 0; i < dataViewFieldsArray.length; i++) {
-            htmlLinks += '<a href="' + dataViewFieldsArray[i] + '">' + dataViewFieldsArray[i] + '</a><br>';
-        }
-
-        const testDiv = createDiv('dataviewfields');
-        testDiv.innerHTML = htmlLinks;
-        viewContent.appendChild(testDiv);
-
-
+    protected async drawFields(viewContent: Element) {
         const fieldsParser = new FieldsParser(this.plugin);
         const fieldsMatches = await fieldsParser.parseFields();
+        fieldsMatches.forEach((fieldmatch) => console.log(fieldmatch.toTableLine()));
         console.log(fieldsMatches);
 
         const fieldsDiv = createDiv('fieldsDiv');
@@ -75,37 +53,37 @@ export class RegexExtractorView extends ItemView {
         viewContent.appendChild(fieldsDiv);
     }
 
-    getLineInEditor(linenumber: number): string {
-        // Der Editor existiert nur, wenn der Fokus auf dem Editor / VIew ist und nicht, wenn der Fokus z.B. auf der Seitenleiste ist.
-        const editor = app.workspace.activeEditor?.editor;
-        console.log('editor:');
-        console.log(editor);
-        if (editor) {
-            console.log('get line from editor:')
-            return editor.getLine(linenumber);
-        }
-        return 'no line';
+    protected async drawParsedContentTable(viewContent: Element) {
+        const fieldsParser = new FieldsParser(this.plugin);
+        const fieldsMatches = await fieldsParser.parseFields();
+        const parsedContentContainer = document.createElement("div")
+        parsedContentContainer.classList.add("parsedContentContainer");
+        const parsedContentTable = document.createElement("table");
+        fieldsMatches.forEach((fieldmatch) => parsedContentTable.appendChild(fieldmatch.toTableLine()));
+
+        parsedContentContainer.appendChild(parsedContentTable);
+        viewContent.appendChild(parsedContentContainer);
     }
 
-    goToLineInEditor(linenumber: number) {
-        // Der Editor existiert nur, wenn der Fokus auf dem Editor / VIew ist und nicht, wenn der Fokus z.B. auf der Seitenleiste ist.
-        const editor = app.workspace.activeEditor?.editor;
-        console.log('editor:');
-        console.log(editor);
-        if (editor) {
-            editor.scrollTo(linenumber);
-        }
-    }
 
-    async goToLine(editor: Editor, operations: EditorSelectionOrCaret[]) {
-            const lastLine = editor.lastLine();
-            const pastEnd = operations.find(op => op.anchor.line > lastLine)
-            if (pastEnd != undefined) {
-                const lastChar = editor.getLine(lastLine).length
-                editor.setSelection({line: lastLine, ch: lastChar});
-                editor.exec("newlineAndIndent");
-            }
-        editor.setSelections(operations);
+
+    protected async drawDataviewFields(viewContent: Element) {
+        const dataviewParser = new DataviewParser(this.plugin);
+        const dataViewFieldsArray = dataviewParser.returnDataviewFieldNames();
+
+        for (const fieldName of dataViewFieldsArray) {
+            const fieldElement = createEl("div", "fieldElement");
+            fieldElement.setAttribute("fieldname", fieldName);
+            // const fieldLink = createEl("a", "fieldLink");
+            fieldElement.innerHTML = fieldName;
+            // fieldElement.appendChild(fieldLink);
+
+            fieldElement.addEventListener('click', () => {
+                console.log("fieldName clicked");
+            })
+
+            viewContent.appendChild(fieldElement);
+        }
     }
 
 }

@@ -23,3 +23,6 @@ npm run build
 ### Dataview
 
 Link zur Doku: https://blacksmithgu.github.io/obsidian-dataview/resources/develop-against-dataview/
+
+### Learnings
+- Wenn man hier containerEl nimmt anstatt contentEl, ist es auf gleicher Höhe mit den anderen und verschwindet.

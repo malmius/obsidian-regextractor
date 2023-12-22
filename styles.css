@@ -6,3 +6,12 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.fieldElement {
+    display: inline-block;
+    background-color: pink;
+    color: darkred;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    border-radius: 10px;
+    margin: 3px;
+}

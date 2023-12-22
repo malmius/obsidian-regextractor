@@ -1,6 +1,7 @@
 import RegexExtractorPlugin from "./main";
 import { VIEW_TYPES, REGEX_EXPRESSIONS } from './constants';
 import { getAPI, Values } from "obsidian-dataview";
+import { table } from "console";
 
 abstract class Parser {
 	public plugin: RegexExtractorPlugin;
@@ -20,19 +21,12 @@ export class DataviewParser extends Parser {
 
     returnDataviewFieldNames(): string[] {
         const activeFile = this.plugin.app.workspace.getActiveFile();
-        console.log('active file:')
-        console.log(activeFile);
         if (activeFile) {
             const activeFileContent = this.plugin.app.vault.cachedRead(activeFile);
-            console.log('active file content:')
-            console.log(activeFileContent)
         }
-        console.log('printing dataview API');
-        console.log(this.dataviewAPI);
         const field = this.dataviewAPI.page(activeFile?.name);
         const dataViewFieldsArray = [];
         for (const fieldName of Object.keys(field)) {
-            console.log(fieldName);
             dataViewFieldsArray.push(fieldName);
         }
         console.log(field);
@@ -48,7 +42,7 @@ export class FieldsParser extends Parser {
         this.dataviewAPI = getAPI(plugin.app);
     }
 
-    async getActiveFileLines(): Promise<string[]> {
+    async getLinesOfActiveFile(): Promise<string[]> {
         const activeFile = this.plugin.app.workspace.getActiveFile();
         let lines: string[] = [];
         if (activeFile) {
@@ -61,13 +55,15 @@ export class FieldsParser extends Parser {
     }
 
     returnFieldMatches(lines: string[]): RegexExtract[] {
-        const matches = new RegExp(REGEX_EXPRESSIONS.FIELDS_ROUNDBRACKETS, "m");
+        const regExpression = new RegExp(REGEX_EXPRESSIONS.FIELDS_ROUNDBRACKETS, "m");
         const extracts: RegexExtract[] = [];
         
         for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
             const line = lines[i]; // current line
-            if (matches.test(line)) {
-                const newExtract = new RegexExtract(i, line);
+            const matches = line.match(regExpression);
+            if (matches) {
+                console.log("match: " + matches);
+                const newExtract = new RegexExtract(i, ['total', 'fieldname', 'fieldcontent'], matches);
                 extracts.push(newExtract);
             }
         }
@@ -75,24 +71,39 @@ export class FieldsParser extends Parser {
     }
 
     async parseFields(): Promise<RegexExtract[]> {
-        const fileLines = await this.getActiveFileLines();
+        const fileLines = await this.getLinesOfActiveFile();
         const parsedExtracts = this.returnFieldMatches(fileLines);
-        console.log(parsedExtracts);
-
         return parsedExtracts;
     }
 }
 
 class RegexExtract {
     lineNumber: number;
-    parsedContent: string;
+    regExMap: string[];
+    matches: string[];
 
-    constructor(lineNumber: number, parsedContent: string) {
+    constructor(lineNumber: number, regExMap: string[], matches: string[]) {
         this.lineNumber = lineNumber;
-        this.parsedContent = parsedContent;
+        this.regExMap = regExMap;
+        this.matches = matches;
+    }
+
+    toTableLine(filter?: string): Element {
+        const tableRow = document.createElement("tr");
+
+        // linenumber
+        const columnLineNumber = document.createElement("td");
+        columnLineNumber.innerHTML = this.lineNumber.toString();
+        tableRow.appendChild(columnLineNumber);
+
+        // parsedelement
+        const columnParsedContent = document.createElement("td");
+        columnParsedContent.innerHTML = this.matches[2];
+        tableRow.appendChild(columnParsedContent);
+        return tableRow;
     }
 
     toString() {
-        return `linenumber: ${this.lineNumber}, content: ${this.parsedContent}`
+        return `linenumber: ${this.lineNumber}, matches: ${this.matches}`
     }
 }
