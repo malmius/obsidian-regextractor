@@ -23,6 +23,7 @@ npm run build
 - [ ] Link zur Editor Position
 
 ### Adjustments
+
 - esbuild.config.mjs muss einen gültigen Pfad haben für den Entrypoint (wenn man das main.ts verschiebt, muss man es anpassen)
 
 ### Dataview
@@ -100,3 +101,10 @@ In der `onload()` Funktion:
 	}
 ```
 
+#### Access Dataview
+
+```
+        this.dataviewAPI = getAPI(plugin.app);
+        const activeFile = this.plugin.app.workspace.getActiveFile();
+        const field = this.dataviewAPI.page(activeFile?.name);
+```

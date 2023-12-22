@@ -1,5 +1,5 @@
 import RegexExtractorPlugin from "./main";
-import { VIEW_TYPES, REGEX_TYPES, RegexType} from './constants';
+import { REGEX_TYPES, RegexType} from './constants';
 import { getAPI } from "obsidian-dataview";
 
 abstract class Parser {
@@ -8,28 +8,23 @@ abstract class Parser {
 	constructor(plugin: RegexExtractorPlugin) {
 		this.plugin = plugin;
 	}
-}
 
-export class DataviewParser extends Parser {
-    dataviewAPI;
+    abstract parseFields(): Promise<ParsedExtract[]>;
 
-	constructor(plugin: RegexExtractorPlugin) {
-		super(plugin);
-        this.dataviewAPI = getAPI(plugin.app);
-    }
+    abstract getDistinctFieldNames(fieldsArray: ParsedExtract[]): string[];
 
-    returnDataviewFieldNames(): string[] {
+    abstract returnFieldMatches(lines: string[]): ParsedExtract[];
+
+    protected async getLinesOfActiveFile(): Promise<string[]> {
         const activeFile = this.plugin.app.workspace.getActiveFile();
+        let lines: string[] = [];
         if (activeFile) {
-            const activeFileContent = this.plugin.app.vault.cachedRead(activeFile);
+            const activeFileContent = await this.plugin.app.vault.cachedRead(activeFile);
+            if (activeFileContent) {
+                lines = activeFileContent.split("\n");
+            }
         }
-        const field = this.dataviewAPI.page(activeFile?.name);
-        const dataViewFieldsArray = [];
-        for (const fieldName of Object.keys(field)) {
-            dataViewFieldsArray.push(fieldName);
-        }
-        console.log(field);
-        return dataViewFieldsArray;
+        return lines;
     }
 }
 
@@ -41,41 +36,29 @@ export class FieldsParser extends Parser {
         this.dataviewAPI = getAPI(plugin.app);
     }
 
-    async getLinesOfActiveFile(): Promise<string[]> {
-        const activeFile = this.plugin.app.workspace.getActiveFile();
-        let lines: string[] = [];
-        if (activeFile) {
-            const activeFileContent = await this.plugin.app.vault.cachedRead(activeFile);
-            if (activeFileContent) {
-                lines = activeFileContent.split("\n");
-            }
-        }
-        return lines;
-    }
-
-    returnFieldMatches(lines: string[]): RegexExtract[] {
+    returnFieldMatches(lines: string[]): ParsedExtract[] {
         const regExpression = new RegExp(REGEX_TYPES.FIELD_ROUNDBRACKETS.regEx, "m");
-        const extracts: RegexExtract[] = [];
+        const extracts: ParsedExtract[] = [];
         
         for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
             const line = lines[i]; // current line
             const matches = line.match(regExpression);
             if (matches) {
                 console.log("match: " + matches);
-                const newExtract = new RegexExtract(i, REGEX_TYPES.FIELD_ROUNDBRACKETS, matches);
+                const newExtract = new ParsedExtract(i, REGEX_TYPES.FIELD_ROUNDBRACKETS, matches);
                 extracts.push(newExtract);
             }
         }
         return extracts;
     }
 
-    async parseFields(): Promise<RegexExtract[]> {
+    async parseFields(): Promise<ParsedExtract[]> {
         const fileLines = await this.getLinesOfActiveFile();
         const parsedExtracts = this.returnFieldMatches(fileLines);
         return parsedExtracts;
     }
 
-    getDistinctFieldNames(fieldsArray: RegexExtract[]) {
+    getDistinctFieldNames(fieldsArray: ParsedExtract[]): string[] {
         const distinctFieldNames: string[] = [];
         fieldsArray.forEach((regexExtract) => {
             const titleIndex = regexExtract.regExType.titleGroupIndex;
@@ -88,7 +71,7 @@ export class FieldsParser extends Parser {
     }
 }
 
-class RegexExtract {
+class ParsedExtract {
     lineNumber: number;
     regExType: RegexType;
     matches: string[];
