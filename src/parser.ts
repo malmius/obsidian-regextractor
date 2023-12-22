@@ -43,9 +43,8 @@ export class Parser {
             const matches = line.matchAll(regExpression);
             if (matches) {
                 for (const match of matches) {
-                    console.log("match: " + match);
+                    // console.log("match: " + match);
                     const newExtract = new ParsedExtract(i, regexType, match);
-                    console.log(newExtract);
                     extracts.push(newExtract);
                 }
             }
@@ -77,7 +76,7 @@ class ParsedExtract {
     }
 
     toTableLine(filter?: string): Element | null {
-        console.log('tablefilter: ' + filter);
+        // console.log('tablefilter: ' + filter);
         if (filter) {
             const filterLowerCase = filter.toLowerCase();
             if (!getRegexTypeNames().includes(filterLowerCase)) {

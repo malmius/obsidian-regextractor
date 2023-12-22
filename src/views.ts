@@ -1,7 +1,8 @@
 import { WorkspaceLeaf, ItemView, setIcon } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser } from "./parser";
-import { REGEX_TYPES, VIEW_TYPES } from './constants';
+import { REGEX_TYPES, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
+import { types } from "util";
 
 //import { t } from "./lang/helper"
 
@@ -31,8 +32,12 @@ export class RegexExtractorView extends ItemView {
     }
 
     reloadRegexExtractorView() {
+        const typesContainer = document.getElementById('typesContainer')
         const fieldsContainer = document.getElementById('parsedFieldsContainer');
         const contentContainer = document.getElementById('parsedContentContainer');
+        if (typesContainer) {
+            this.drawTypes(typesContainer);
+        }
         if (fieldsContainer) {
             this.drawFields(fieldsContainer); 
         }
@@ -56,6 +61,12 @@ export class RegexExtractorView extends ItemView {
             }
 		});
 
+        // Aktuell ausgeblendet
+        // const typesContainer = document.createElement('div');
+        // typesContainer.id = 'typesContainer'
+        // typesContainer.classList.add('typesContainer');
+        // viewContent.appendChild(typesContainer);
+
         const parsedFieldsContainer = document.createElement('div');
         parsedFieldsContainer.id = 'parsedFieldsContainer'
         parsedFieldsContainer.classList.add('parsedFieldsContainer');
@@ -67,10 +78,19 @@ export class RegexExtractorView extends ItemView {
         viewContent.appendChild(parsedContentContainer);
     }
 
+    protected drawTypes(parentElement: Element) {
+        parentElement.innerHTML = '';
+        const types = getRegexTypeNames();
+        types.forEach(type => {
+            const typePill = this.makePill(type);
+            parentElement.appendChild(typePill);
+        })
+    }
+
     protected async drawFields(parentElement: Element) {
         parentElement.innerHTML = '';
 
-        const regexTypes = Object.values(REGEX_TYPES);
+        const regexTypes = getFilterableRegexTypes();
 
         regexTypes.forEach(async (type) => {
             const parser = new Parser(this.plugin);
@@ -78,7 +98,7 @@ export class RegexExtractorView extends ItemView {
             const distinctFieldnames = parser.getDistinctFieldNames(fieldsMatches);
     
             distinctFieldnames.forEach((fieldname: string) => {
-                const fieldPill = this.drawFieldnameAsPill(fieldname);
+                const fieldPill = this.makePill(fieldname);
                 parentElement.appendChild(fieldPill);
             })
         })
@@ -103,13 +123,12 @@ export class RegexExtractorView extends ItemView {
         });
     }
 
-    drawFieldnameAsPill(fieldname: string): Element {
+    makePill(fieldname: string): Element {
         const fieldElement = createEl("div", "fieldElement");
         fieldElement.setAttribute("fieldname", fieldname);
         fieldElement.innerHTML = fieldname;
 
         fieldElement.addEventListener('click', () => {
-            console.log("fieldName clicked");
             const contentContainer = document.getElementById('parsedContentContainer');
             if (contentContainer) {
                 this.drawParsedContentTable(contentContainer, fieldname);
