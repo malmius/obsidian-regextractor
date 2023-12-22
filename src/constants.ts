@@ -50,15 +50,11 @@ export const REGEX_TYPES = {
   };
 
 export function getRegexTypeNames(): string[] {
-    return Object.keys(REGEX_TYPES).map(key => key.toLowerCase());
+    /**
+     * In this code, Object.keys() returns an array of keys from the REGEX_TYPES object.
+     * The map() function converts each key to lowercase using toLowerCase().
+     * The new Set() constructor then removes duplicate values.
+     * The spread syntax ([...set]) is used to convert the set back to an array.
+     */
+    return [...new Set(Object.keys(REGEX_TYPES).map(key => key.toLowerCase()))];
 }
-
-//   export const REGEX_TYPES = {
-//     'FIELD_ROUNDBRACKETS': {
-//         regEx: '\\((\\w+)::(.*?)\\)',
-//         type: 'FIELD',
-//         regExGroups: ['total', 'fieldname', 'fieldcontent'],
-//         titleGroupIndex: 1, 
-//         contentGroupIndex: 2
-//     }
-// }
