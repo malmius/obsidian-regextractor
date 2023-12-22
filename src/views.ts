@@ -1,4 +1,4 @@
-import { WorkspaceLeaf, ItemView, Editor } from "obsidian";
+import { WorkspaceLeaf, ItemView, Editor, setIcon } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { DataviewParser, FieldsParser } from "./parser";
 import { VIEW_TYPES } from './constants';
@@ -32,7 +32,6 @@ export class RegexExtractorView extends ItemView {
         if (contentContainer) {
             this.drawParsedContentTable(contentContainer);
         }
-        // this.drawDataviewContent(this.contentEl);
     }
 
     // Beispiel Menü-Item
@@ -50,6 +49,18 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected loadViewStructure(viewContent: Element) {
+        // add icon for refresh
+		const navActionButtonRefresh = document.createElement("nav-action-button");
+		setIcon(navActionButtonRefresh, "refresh-cw");
+
+		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
+            const parsedFieldsContainer = document.getElementById('parsedFieldsContainer');
+            if (parsedFieldsContainer) {
+                this.drawDataviewFields(parsedFieldsContainer);
+            }
+		});
+        viewContent.appendChild(navActionButtonRefresh);
+
         const parsedFieldsContainer = document.createElement('div');
         parsedFieldsContainer.id = 'parsedFieldsContainer'
         parsedFieldsContainer.classList.add('parsedFieldsContainer');
@@ -86,6 +97,8 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected async drawDataviewFields(parentElement: Element) {
+        parentElement.innerHTML = '';
+
         const dataviewParser = new DataviewParser(this.plugin);
         const dataViewFieldsArray = dataviewParser.returnDataviewFieldNames();
 
