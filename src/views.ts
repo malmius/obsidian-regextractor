@@ -23,6 +23,11 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected async onOpen(): Promise<void> {
+        this.reloadRegexExtractorView();
+    }
+
+    reloadRegexExtractorView() {
+        console.log('load regex extractor view')
         this.loadViewStructure(this.contentEl);
         const fieldsContainer = document.getElementById('parsedFieldsContainer');
         const contentContainer = document.getElementById('parsedContentContainer');

@@ -26,8 +26,17 @@ export default class RegexExtractorPlugin extends Plugin {
 
 		this.registerView(VIEW_TYPES.DEFAULT_VIEW, (leaf) => new RegexExtractorView(leaf, this));
 
-		// this.registerEvent(this.app.workspace.on("file-open", () => {
-		// }));
+		// Wenn eine neue View geöffnet wird, wird die View aktualisiert
+		// TEMPLATE: So wie hier sollte man auf die spezifischen Views referenzieren!
+		this.registerEvent(this.app.workspace.on("file-open", () => {
+			for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPES.DEFAULT_VIEW)) {
+				const view = leaf.view;
+				if (view instanceof RegexExtractorView) {
+					view.reloadRegexExtractorView();
+				}
+			}
+
+		}));
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();

@@ -23,9 +23,8 @@ If your plugin does not need CSS, delete this file.
 .parsedContentContainer {
 }
 
-.parsedContentContainer > table > tr {
+.parsedContentContainer > table > tr > td {
 }
 
 .parsedContentContainer > table > tr > td:first-child {
-    border-right: solid black 1px;
 }
