@@ -46,7 +46,16 @@ export const REGEX_TYPES = {
         ['total'],
         -1, // Kein Name
         1
+    ),
+    'Q&A': new RegexType(
+        '^(#Q)[ ]*[:]{0,2}[ ]*((?:.+\n)*)\n*(#A)[ ]*[:]{0,2}[ ]*(.+(?:\n(?:^.{1,3}$|^.{4}(?<!<!--).*))*)',
+        'Q&A',
+        ['total', 'Q', 'Qcontent', 'A', 'Acontent'],
+        1, // Kein Name
+        2
     )
+
+    
   };
 
 export function getRegexTypeNames(): string[] {

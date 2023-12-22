@@ -35,16 +35,19 @@ export class Parser {
         return distinctFieldNames;
     }
     returnFieldMatches(regexType: RegexType, lines: string[]): ParsedExtract[] {
-        const regExpression = new RegExp(regexType.regEx, "m");
+        const regExpression = new RegExp(regexType.regEx, "gm");
         const extracts: ParsedExtract[] = [];
         
         for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
             const line = lines[i]; // current line
-            const matches = line.match(regExpression);
+            const matches = line.matchAll(regExpression);
             if (matches) {
-                console.log("match: " + matches);
-                const newExtract = new ParsedExtract(i, regexType, matches);
-                extracts.push(newExtract);
+                for (const match of matches) {
+                    console.log("match: " + match);
+                    const newExtract = new ParsedExtract(i, regexType, match);
+                    console.log(newExtract);
+                    extracts.push(newExtract);
+                }
             }
         }
         return extracts;
