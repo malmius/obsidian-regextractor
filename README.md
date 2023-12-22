@@ -19,7 +19,8 @@ npm run build
 
 ## Roadmap
 
-- [ ] Weitere Regex hinzufügen (weitere Fields, Highlights)
+- [x] Weitere Regex hinzufügen (weitere Fields, Highlights)
+- [ ] Markdown-Renderer verwenden
 - [ ] Link zur Editor Position
 
 ### Adjustments

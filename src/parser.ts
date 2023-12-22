@@ -1,3 +1,4 @@
+import { MarkdownRenderer } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { REGEX_TYPES, RegexType, getRegexTypeNames} from './constants';
 import { getAPI } from "obsidian-dataview";
@@ -94,7 +95,10 @@ class ParsedExtract {
 
         // parsedelement
         const columnParsedContent = document.createElement("td");
-        columnParsedContent.innerHTML = this.matches[this.regExType.contentGroupIndex];
+        const contentString = this.matches[this.regExType.contentGroupIndex];
+
+        // columnParsedContent.createSpan("extractor-element-text"), (el) => {MarkdownRenderer.render(this.plugin.app, contentString, el, this.plugin.)};
+        columnParsedContent.innerHTML = contentString;
         tableRow.appendChild(columnParsedContent);
         return tableRow;
     }
