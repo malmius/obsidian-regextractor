@@ -17,6 +17,11 @@ Build Javascript once:
 npm run build
 ```
 
+## Roadmap
+
+- [ ] Weitere Regex hinzufügen (weitere Fields, Highlights)
+- [ ] Link zur Editor Position
+
 ### Adjustments
 - esbuild.config.mjs muss einen gültigen Pfad haben für den Entrypoint (wenn man das main.ts verschiebt, muss man es anpassen)
 
