@@ -33,11 +33,18 @@ export const REGEX_TYPES = {
         1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
         2
       ),
+      'FIELD_NOBRACKETS': new RegexType(
+        '^([^(\\[]*)::(.*)',
+        'FIELD',
+        ['total', 'fieldname', 'fieldcontent'],
+        1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
+        2
+      ),
     'HIGHLIGHT': new RegexType(
         '==(.*?)==',
         'HIGHLIGHT',
         ['total'],
-        -1,
+        -1, // Kein Name
         1
     )
   };
