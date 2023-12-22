@@ -1,7 +1,7 @@
-import { WorkspaceLeaf, ItemView, Editor, setIcon } from "obsidian";
+import { WorkspaceLeaf, ItemView, setIcon } from "obsidian";
 import RegexExtractorPlugin from "./main";
-import { DataviewParser, FieldsParser } from "./parser";
-import { VIEW_TYPES } from './constants';
+import { Parser } from "./parser";
+import { REGEX_TYPES, VIEW_TYPES } from './constants';
 
 //import { t } from "./lang/helper"
 
@@ -70,28 +70,37 @@ export class RegexExtractorView extends ItemView {
     protected async drawFields(parentElement: Element) {
         parentElement.innerHTML = '';
 
-        const fieldsParser = new FieldsParser(this.plugin);
-        const fieldsMatches = await fieldsParser.parseFields();
-        const distinctFieldnames = fieldsParser.getDistinctFieldNames(fieldsMatches);
+        const regexTypes = Object.values(REGEX_TYPES);
 
-        distinctFieldnames.forEach((fieldname) => {
-            const fieldPill = this.drawFieldnameAsPill(fieldname);
-            parentElement.appendChild(fieldPill);
+        regexTypes.forEach(async (type) => {
+            const parser = new Parser(this.plugin);
+            const fieldsMatches = await parser.parseFields(type);
+            const distinctFieldnames = parser.getDistinctFieldNames(fieldsMatches);
+    
+            distinctFieldnames.forEach((fieldname: string) => {
+                const fieldPill = this.drawFieldnameAsPill(fieldname);
+                parentElement.appendChild(fieldPill);
+            })
         })
 
     }
 
     protected async drawParsedContentTable(parentElement: Element, filter?: string) {
         parentElement.innerHTML = '';
-        const fieldsParser = new FieldsParser(this.plugin);
-        const fieldsMatches = await fieldsParser.parseFields();
-        const parsedContentTable = document.createElement("table");
-        fieldsMatches.forEach((fieldmatch) => {
-            const tableRow = fieldmatch.toTableLine(filter)
-            if (tableRow) {
-                parsedContentTable.appendChild(tableRow);
-            }})
-        parentElement.appendChild(parsedContentTable);
+
+        const regexTypes = Object.values(REGEX_TYPES);
+
+        regexTypes.forEach(async (type) => {
+            const parser = new Parser(this.plugin);
+            const fieldsMatches = await parser.parseFields(type);
+            const parsedContentTable = document.createElement("table");
+            fieldsMatches.forEach((fieldmatch) => {
+                const tableRow = fieldmatch.toTableLine(filter)
+                if (tableRow) {
+                    parsedContentTable.appendChild(tableRow);
+                }})
+            parentElement.appendChild(parsedContentTable);
+        });
     }
 
     drawFieldnameAsPill(fieldname: string): Element {

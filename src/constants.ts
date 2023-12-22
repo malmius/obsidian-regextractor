@@ -25,8 +25,26 @@ export const REGEX_TYPES = {
       ['total', 'fieldname', 'fieldcontent'],
       1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
       2
+    ),
+    'FIELD_SQUAREBRACKETS': new RegexType(
+        '\\[(\\w+)::(.*?)\\]',
+        'FIELD',
+        ['total', 'fieldname', 'fieldcontent'],
+        1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
+        2
+      ),
+    'HIGHLIGHT': new RegexType(
+        '==(.*?)==',
+        'HIGHLIGHT',
+        ['total'],
+        -1,
+        1
     )
   };
+
+export function getRegexTypeNames(): string[] {
+    return Object.keys(REGEX_TYPES).map(key => key.toLowerCase());
+}
 
 //   export const REGEX_TYPES = {
 //     'FIELD_ROUNDBRACKETS': {

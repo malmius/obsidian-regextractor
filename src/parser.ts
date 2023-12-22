@@ -1,20 +1,54 @@
 import RegexExtractorPlugin from "./main";
-import { REGEX_TYPES, RegexType} from './constants';
+import { REGEX_TYPES, RegexType, getRegexTypeNames} from './constants';
 import { getAPI } from "obsidian-dataview";
+import { title } from "process";
 
-abstract class Parser {
+export class Parser {
 	public plugin: RegexExtractorPlugin;
 
 	constructor(plugin: RegexExtractorPlugin) {
 		this.plugin = plugin;
 	}
 
-    abstract parseFields(): Promise<ParsedExtract[]>;
+    async parseFields(regexType: RegexType): Promise<ParsedExtract[]> {
+        const fileLines = await this.getLinesOfActiveFile();
+        const parsedExtracts = this.returnFieldMatches(regexType, fileLines);
+        return parsedExtracts;
+    }
 
-    abstract getDistinctFieldNames(fieldsArray: ParsedExtract[]): string[];
-
-    abstract returnFieldMatches(lines: string[]): ParsedExtract[];
-
+    getDistinctFieldNames(fieldsArray: ParsedExtract[]): string[] {
+        const distinctFieldNames: string[] = [];
+        fieldsArray.forEach((regexExtract) => {
+            let fieldName: string;
+            const titleIndex = regexExtract.regExType.titleGroupIndex;
+            if (titleIndex == -1) {
+                fieldName = regexExtract.regExType.type;
+                distinctFieldNames.push(fieldName);
+            }
+            else {
+                fieldName = regexExtract.matches[titleIndex].toLowerCase();
+                if (!distinctFieldNames.includes(fieldName)) {
+                    distinctFieldNames.push(fieldName);
+                }
+            }
+        })
+        return distinctFieldNames;
+    }
+    returnFieldMatches(regexType: RegexType, lines: string[]): ParsedExtract[] {
+        const regExpression = new RegExp(regexType.regEx, "m");
+        const extracts: ParsedExtract[] = [];
+        
+        for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
+            const line = lines[i]; // current line
+            const matches = line.match(regExpression);
+            if (matches) {
+                console.log("match: " + matches);
+                const newExtract = new ParsedExtract(i, regexType, matches);
+                extracts.push(newExtract);
+            }
+        }
+        return extracts;
+    }
     protected async getLinesOfActiveFile(): Promise<string[]> {
         const activeFile = this.plugin.app.workspace.getActiveFile();
         let lines: string[] = [];
@@ -25,49 +59,6 @@ abstract class Parser {
             }
         }
         return lines;
-    }
-}
-
-export class FieldsParser extends Parser {
-    dataviewAPI;
-
-	constructor(plugin: RegexExtractorPlugin) {
-		super(plugin);
-        this.dataviewAPI = getAPI(plugin.app);
-    }
-
-    returnFieldMatches(lines: string[]): ParsedExtract[] {
-        const regExpression = new RegExp(REGEX_TYPES.FIELD_ROUNDBRACKETS.regEx, "m");
-        const extracts: ParsedExtract[] = [];
-        
-        for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
-            const line = lines[i]; // current line
-            const matches = line.match(regExpression);
-            if (matches) {
-                console.log("match: " + matches);
-                const newExtract = new ParsedExtract(i, REGEX_TYPES.FIELD_ROUNDBRACKETS, matches);
-                extracts.push(newExtract);
-            }
-        }
-        return extracts;
-    }
-
-    async parseFields(): Promise<ParsedExtract[]> {
-        const fileLines = await this.getLinesOfActiveFile();
-        const parsedExtracts = this.returnFieldMatches(fileLines);
-        return parsedExtracts;
-    }
-
-    getDistinctFieldNames(fieldsArray: ParsedExtract[]): string[] {
-        const distinctFieldNames: string[] = [];
-        fieldsArray.forEach((regexExtract) => {
-            const titleIndex = regexExtract.regExType.titleGroupIndex;
-            const fieldname = regexExtract.matches[titleIndex].toLowerCase();
-            if (!distinctFieldNames.includes(fieldname)) {
-                distinctFieldNames.push(fieldname);
-            }
-        })
-        return distinctFieldNames;
     }
 }
 
@@ -86,8 +77,10 @@ class ParsedExtract {
         console.log('tablefilter: ' + filter);
         if (filter) {
             const filterLowerCase = filter.toLowerCase();
-            if (!this.matches[this.regExType.titleGroupIndex].toLowerCase().includes(filterLowerCase)) {
-                return null;
+            if (!getRegexTypeNames().includes(filterLowerCase)) {
+                if (!this.matches[this.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
+                    return null;
+                }
             }
         }
         const tableRow = document.createElement("tr");
