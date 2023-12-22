@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Notice, Plugin } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin } from 'obsidian';
 import { VIEW_TYPES } from './constants';
 
 import { RegexEctractorPluginSettingsTab, RegexEctractorPluginSettings, DEFAULT_SETTINGS } from './settings'

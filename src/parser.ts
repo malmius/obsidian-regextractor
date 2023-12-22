@@ -1,7 +1,6 @@
 import RegexExtractorPlugin from "./main";
-import { VIEW_TYPES, REGEX_EXPRESSIONS } from './constants';
-import { getAPI, Values } from "obsidian-dataview";
-import { table } from "console";
+import { VIEW_TYPES, REGEX_TYPES, RegexType} from './constants';
+import { getAPI } from "obsidian-dataview";
 
 abstract class Parser {
 	public plugin: RegexExtractorPlugin;
@@ -55,7 +54,7 @@ export class FieldsParser extends Parser {
     }
 
     returnFieldMatches(lines: string[]): RegexExtract[] {
-        const regExpression = new RegExp(REGEX_EXPRESSIONS.FIELDS_ROUNDBRACKETS, "m");
+        const regExpression = new RegExp(REGEX_TYPES.FIELD_ROUNDBRACKETS.regEx, "m");
         const extracts: RegexExtract[] = [];
         
         for (let i = 0; i < lines.length; i++) { // Read filecontent line by line
@@ -63,7 +62,7 @@ export class FieldsParser extends Parser {
             const matches = line.match(regExpression);
             if (matches) {
                 console.log("match: " + matches);
-                const newExtract = new RegexExtract(i, ['total', 'fieldname', 'fieldcontent'], matches);
+                const newExtract = new RegexExtract(i, REGEX_TYPES.FIELD_ROUNDBRACKETS, matches);
                 extracts.push(newExtract);
             }
         }
@@ -79,16 +78,22 @@ export class FieldsParser extends Parser {
 
 class RegexExtract {
     lineNumber: number;
-    regExMap: string[];
+    regExType: RegexType;
     matches: string[];
 
-    constructor(lineNumber: number, regExMap: string[], matches: string[]) {
+    constructor(lineNumber: number, regExType: RegexType, matches: string[]) {
         this.lineNumber = lineNumber;
-        this.regExMap = regExMap;
+        this.regExType = regExType;
         this.matches = matches;
     }
 
-    toTableLine(filter?: string): Element {
+    toTableLine(filter?: string): Element | null {
+        console.log('tablefilter: ' + filter);
+        if (filter) {
+            if (!this.matches[this.regExType.titleGroupIndex].includes(filter)) {
+                return null;
+            }
+        }
         const tableRow = document.createElement("tr");
 
         // linenumber
@@ -98,7 +103,7 @@ class RegexExtract {
 
         // parsedelement
         const columnParsedContent = document.createElement("td");
-        columnParsedContent.innerHTML = this.matches[2];
+        columnParsedContent.innerHTML = this.matches[this.regExType.contentGroupIndex];
         tableRow.appendChild(columnParsedContent);
         return tableRow;
     }

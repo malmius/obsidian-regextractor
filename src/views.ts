@@ -23,8 +23,15 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected async onOpen(): Promise<void> {
-        this.drawDataviewFields(this.contentEl); 
-        this.drawParsedContentTable(this.contentEl);
+        this.loadViewStructure(this.contentEl);
+        const fieldsContainer = document.getElementById('parsedFieldsContainer');
+        const contentContainer = document.getElementById('parsedContentContainer');
+        if (fieldsContainer) {
+            this.drawDataviewFields(fieldsContainer); 
+        }
+        if (contentContainer) {
+            this.drawParsedContentTable(contentContainer);
+        }
         // this.drawDataviewContent(this.contentEl);
     }
 
@@ -42,7 +49,19 @@ export class RegexExtractorView extends ItemView {
     onload(): void {
     }
 
-    protected async drawFields(viewContent: Element) {
+    protected loadViewStructure(viewContent: Element) {
+        const parsedFieldsContainer = document.createElement('div');
+        parsedFieldsContainer.id = 'parsedFieldsContainer'
+        parsedFieldsContainer.classList.add('parsedFieldsContainer');
+        viewContent.appendChild(parsedFieldsContainer);
+
+        const parsedContentContainer = document.createElement('div')
+        parsedContentContainer.id = 'parsedContentContainer'
+        parsedContentContainer.classList.add('parsedContentContainer');
+        viewContent.appendChild(parsedContentContainer);
+    }
+
+    protected async drawFields(parentElement: Element) {
         const fieldsParser = new FieldsParser(this.plugin);
         const fieldsMatches = await fieldsParser.parseFields();
         fieldsMatches.forEach((fieldmatch) => console.log(fieldmatch.toTableLine()));
@@ -50,24 +69,23 @@ export class RegexExtractorView extends ItemView {
 
         const fieldsDiv = createDiv('fieldsDiv');
         fieldsDiv.innerHTML = fieldsMatches.join(',');
-        viewContent.appendChild(fieldsDiv);
+        parentElement.appendChild(fieldsDiv);
     }
 
-    protected async drawParsedContentTable(viewContent: Element) {
+    protected async drawParsedContentTable(parentElement: Element, filter?: string) {
+        parentElement.innerHTML = '';
         const fieldsParser = new FieldsParser(this.plugin);
         const fieldsMatches = await fieldsParser.parseFields();
-        const parsedContentContainer = document.createElement("div")
-        parsedContentContainer.classList.add("parsedContentContainer");
         const parsedContentTable = document.createElement("table");
-        fieldsMatches.forEach((fieldmatch) => parsedContentTable.appendChild(fieldmatch.toTableLine()));
-
-        parsedContentContainer.appendChild(parsedContentTable);
-        viewContent.appendChild(parsedContentContainer);
+        fieldsMatches.forEach((fieldmatch) => {
+            const tableRow = fieldmatch.toTableLine(filter)
+            if (tableRow) {
+                parsedContentTable.appendChild(tableRow);
+            }})
+        parentElement.appendChild(parsedContentTable);
     }
 
-
-
-    protected async drawDataviewFields(viewContent: Element) {
+    protected async drawDataviewFields(parentElement: Element) {
         const dataviewParser = new DataviewParser(this.plugin);
         const dataViewFieldsArray = dataviewParser.returnDataviewFieldNames();
 
@@ -80,9 +98,13 @@ export class RegexExtractorView extends ItemView {
 
             fieldElement.addEventListener('click', () => {
                 console.log("fieldName clicked");
+                const contentContainer = document.getElementById('parsedContentContainer');
+                if (contentContainer) {
+                    this.drawParsedContentTable(contentContainer, fieldName);
+                }
             })
 
-            viewContent.appendChild(fieldElement);
+            parentElement.appendChild(fieldElement);
         }
     }
 
