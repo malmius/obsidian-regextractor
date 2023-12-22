@@ -22,13 +22,15 @@ export class RegexExtractorView extends ItemView {
         return 'Displays Regex Extracts';
     }
 
+    // Wird verwendet beim Öffnen der View
     protected async onOpen(): Promise<void> {
+        // Load Basic View Elements (Buttons, Divs)
         this.loadViewStructure(this.contentEl);
+        // Load Specific View Element
         this.reloadRegexExtractorView();
     }
 
     reloadRegexExtractorView() {
-        console.log('load regex extractor view')
         const fieldsContainer = document.getElementById('parsedFieldsContainer');
         const contentContainer = document.getElementById('parsedContentContainer');
         if (fieldsContainer) {
@@ -39,23 +41,12 @@ export class RegexExtractorView extends ItemView {
         }
     }
 
-    // Beispiel Menü-Item
-    // public onPaneMenu(menu: Menu): void {
-	// 	menu.addItem((item) => {
-	// 		item.setTitle("CLOSE")
-	// 			.setIcon("cross")
-	// 			.onClick(() => {
-	// 				this.app.workspace.detachLeavesOfType(VIEW_TYPES.DEFAULT_VIEW);
-	// 			});
-	// 	});
-	// }
-
     onload(): void {
     }
 
     protected loadViewStructure(viewContent: Element) {
         // add icon for refresh
-		const navActionButtonRefresh = document.createElement("nav-action-button");
+		const navActionButtonRefresh = viewContent.createEl("div", "nav-action-button");
 		setIcon(navActionButtonRefresh, "refresh-cw");
 
 		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
@@ -64,7 +55,6 @@ export class RegexExtractorView extends ItemView {
                 this.drawFields(parsedFieldsContainer);
             }
 		});
-        viewContent.appendChild(navActionButtonRefresh);
 
         const parsedFieldsContainer = document.createElement('div');
         parsedFieldsContainer.id = 'parsedFieldsContainer'
