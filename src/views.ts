@@ -27,7 +27,7 @@ export class RegexExtractorView extends ItemView {
         const fieldsContainer = document.getElementById('parsedFieldsContainer');
         const contentContainer = document.getElementById('parsedContentContainer');
         if (fieldsContainer) {
-            this.drawDataviewFields(fieldsContainer); 
+            this.drawFields(fieldsContainer); 
         }
         if (contentContainer) {
             this.drawParsedContentTable(contentContainer);
@@ -56,7 +56,7 @@ export class RegexExtractorView extends ItemView {
 		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
             const parsedFieldsContainer = document.getElementById('parsedFieldsContainer');
             if (parsedFieldsContainer) {
-                this.drawDataviewFields(parsedFieldsContainer);
+                this.drawFields(parsedFieldsContainer);
             }
 		});
         viewContent.appendChild(navActionButtonRefresh);
@@ -73,14 +73,26 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected async drawFields(parentElement: Element) {
+        parentElement.innerHTML = '';
+
         const fieldsParser = new FieldsParser(this.plugin);
         const fieldsMatches = await fieldsParser.parseFields();
-        fieldsMatches.forEach((fieldmatch) => console.log(fieldmatch.toTableLine()));
-        console.log(fieldsMatches);
+        const distinctFieldnames = fieldsParser.getDistinctFieldNames(fieldsMatches);
 
-        const fieldsDiv = createDiv('fieldsDiv');
-        fieldsDiv.innerHTML = fieldsMatches.join(',');
-        parentElement.appendChild(fieldsDiv);
+        // fieldsMatches.forEach((fieldsmatch) => {
+        //     const fieldname = fieldsmatch.matches[fieldsmatch.regExType.titleGroupIndex];
+        //     const fieldPill = this.drawFieldnameAsPill(fieldname);
+        //     parentElement.appendChild(fieldPill);
+        // })
+
+        distinctFieldnames.forEach((fieldname) => {
+            const fieldPill = this.drawFieldnameAsPill(fieldname);
+            parentElement.appendChild(fieldPill);
+        })
+
+        // const fieldsDiv = createDiv('fieldsDiv');
+        // fieldsDiv.innerHTML = fieldsMatches.join(',');
+        // parentElement.appendChild(fieldsDiv);
     }
 
     protected async drawParsedContentTable(parentElement: Element, filter?: string) {
@@ -96,29 +108,45 @@ export class RegexExtractorView extends ItemView {
         parentElement.appendChild(parsedContentTable);
     }
 
-    protected async drawDataviewFields(parentElement: Element) {
-        parentElement.innerHTML = '';
+    // protected async drawDataviewFields(parentElement: Element) {
+    //     parentElement.innerHTML = '';
 
-        const dataviewParser = new DataviewParser(this.plugin);
-        const dataViewFieldsArray = dataviewParser.returnDataviewFieldNames();
+    //     const dataviewParser = new DataviewParser(this.plugin);
+    //     const dataViewFieldsArray = dataviewParser.returnDataviewFieldNames();
 
-        for (const fieldName of dataViewFieldsArray) {
-            const fieldElement = createEl("div", "fieldElement");
-            fieldElement.setAttribute("fieldname", fieldName);
-            // const fieldLink = createEl("a", "fieldLink");
-            fieldElement.innerHTML = fieldName;
-            // fieldElement.appendChild(fieldLink);
+    //     for (const fieldName of dataViewFieldsArray) {
+    //         const fieldElement = createEl("div", "fieldElement");
+    //         fieldElement.setAttribute("fieldname", fieldName);
+    //         // const fieldLink = createEl("a", "fieldLink");
+    //         fieldElement.innerHTML = fieldName;
+    //         // fieldElement.appendChild(fieldLink);
 
-            fieldElement.addEventListener('click', () => {
-                console.log("fieldName clicked");
-                const contentContainer = document.getElementById('parsedContentContainer');
-                if (contentContainer) {
-                    this.drawParsedContentTable(contentContainer, fieldName);
-                }
-            })
+    //         fieldElement.addEventListener('click', () => {
+    //             console.log("fieldName clicked");
+    //             const contentContainer = document.getElementById('parsedContentContainer');
+    //             if (contentContainer) {
+    //                 this.drawParsedContentTable(contentContainer, fieldName);
+    //             }
+    //         })
 
-            parentElement.appendChild(fieldElement);
-        }
+    //         parentElement.appendChild(fieldElement);
+    //     }
+    // }
+
+    drawFieldnameAsPill(fieldname: string): Element {
+        const fieldElement = createEl("div", "fieldElement");
+        fieldElement.setAttribute("fieldname", fieldname);
+        fieldElement.innerHTML = fieldname;
+
+        fieldElement.addEventListener('click', () => {
+            console.log("fieldName clicked");
+            const contentContainer = document.getElementById('parsedContentContainer');
+            if (contentContainer) {
+                this.drawParsedContentTable(contentContainer, fieldname);
+            }
+        })
+
+        return fieldElement;
     }
 
 }

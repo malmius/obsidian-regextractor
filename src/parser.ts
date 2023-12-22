@@ -74,6 +74,18 @@ export class FieldsParser extends Parser {
         const parsedExtracts = this.returnFieldMatches(fileLines);
         return parsedExtracts;
     }
+
+    getDistinctFieldNames(fieldsArray: RegexExtract[]) {
+        const distinctFieldNames: string[] = [];
+        fieldsArray.forEach((regexExtract) => {
+            const titleIndex = regexExtract.regExType.titleGroupIndex;
+            const fieldname = regexExtract.matches[titleIndex].toLowerCase();
+            if (!distinctFieldNames.includes(fieldname)) {
+                distinctFieldNames.push(fieldname);
+            }
+        })
+        return distinctFieldNames;
+    }
 }
 
 class RegexExtract {
@@ -90,7 +102,8 @@ class RegexExtract {
     toTableLine(filter?: string): Element | null {
         console.log('tablefilter: ' + filter);
         if (filter) {
-            if (!this.matches[this.regExType.titleGroupIndex].includes(filter)) {
+            const filterLowerCase = filter.toLowerCase();
+            if (!this.matches[this.regExType.titleGroupIndex].toLowerCase().includes(filterLowerCase)) {
                 return null;
             }
         }
