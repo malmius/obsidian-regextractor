@@ -18,12 +18,13 @@ If your plugin does not need CSS, delete this file.
 
 .parsedFieldsContainer {
     padding: 1em;
+    text-align: center;
 }
 
 .regExtractorCard {
     background-color: var(--background-primary);
     box-shadow: var(--background-modifier-box-shadow) 1px 1px 2px;
-    padding: 1em;
+    padding: 0.5em;
     border-radius: 5px;
     margin-top: 10px;
 }
