@@ -21,7 +21,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .regExtractorCard {
-    background-color: gainsboro;
+    background-color: var(--background-primary);
     box-shadow: var(--background-modifier-box-shadow) 1px 1px 2px;
     padding: 1em;
     border-radius: 5px;
