@@ -205,31 +205,38 @@ export class RegexExtractorView extends ItemView {
                 }
             }
         }
-        
+
         const regExtractorCard = document.createElement("div");
-        regExtractorCard.classList.add('regExtractorCard');
+        regExtractorCard.addClass('regExtractorCard');
         regExtractorCard.setAttribute("isShortened", "false");
+
+        const extractTypeName = extract.getName();
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
         const contentIsLong: boolean = contentString.length >= 50;
 
+        const extractTypeNameTag = regExtractorCard.createEl("div", "extractTypeNameTag");
+        extractTypeNameTag.addClass("extractTypeNameTag");
+        extractTypeNameTag.textContent = extractTypeName;
+
         if (contentIsLong) {
-            regExtractorCard.setAttribute("isShortened", "true");
             const truncatedContentString = contentString.substring(0, 40) + "...";
-            regExtractorCard.innerHTML = truncatedContentString;
+
+            regExtractorCard.setAttribute("isShortened", "true");
+            regExtractorCard.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
 
             // Toggle between shortened and long version
             regExtractorCard.addEventListener("click", (event: MouseEvent) => {
                 regExtractorCard.innerHTML = '';
                 if (regExtractorCard.getAttribute("isShortened") == "true") {
                     regExtractorCard.setAttribute("isShortened", "false");
-                    regExtractorCard.createDiv(("markdown-element"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
+                    regExtractorCard.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
                 } else {
                     regExtractorCard.setAttribute("isShortened", "true");                    
-                    regExtractorCard.createDiv(("markdown-element"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
+                    regExtractorCard.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
                 }
 		}); 
         } else {
-            regExtractorCard.createDiv(("markdown-element"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
+            regExtractorCard.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
             // regExtractorCard.innerHTML = contentString;
         }
         return regExtractorCard;

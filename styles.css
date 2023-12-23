@@ -24,9 +24,29 @@ If your plugin does not need CSS, delete this file.
 .regExtractorCard {
     background-color: var(--background-primary);
     box-shadow: var(--background-modifier-box-shadow) 1px 1px 2px;
-    padding: 0.5em;
     border-radius: 5px;
     margin-top: 10px;
+    display: grid; 
+    grid-template-columns: 1fr 1.4fr 0.6fr; 
+    grid-template-rows: 1fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+          "content content type"
+}
+
+.extractTypeNameTag {
+    display: inline;
+    font-size: 0.7em;
+    color: var(--text-accent);
+    /* background: var(--background-modifier-active-hover); */
+    padding: 0.3em 0.5em;
+    grid-area: type;
+    text-align: right;
+}
+
+.markdown-text {
+    grid-area: content;
+    padding: 0.5em;
 }
 
 .nav-action-button {
