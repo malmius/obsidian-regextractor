@@ -35,6 +35,7 @@ export class Parser {
         })
         return distinctFieldNames;
     }
+
     returnFieldMatches(regexType: RegexType, lines: string[]): ParsedExtract[] {
         const regExpression = new RegExp(regexType.regEx, "gm");
         const extracts: ParsedExtract[] = [];

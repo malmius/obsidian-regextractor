@@ -62,7 +62,7 @@ export class RegexExtractorView extends ItemView {
 		setIcon(navActionButtonShowAsCard, "panel-top");
         const navActionButtonShowAsTable = viewContent.createEl("div", "nav-action-button");
 		setIcon(navActionButtonShowAsTable, "table");
-
+        const fieldTypeDropDown = viewContent.createEl("select", "fieldTypeDropDown");
 
 		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
             this.reloadRegexExtractorViewDefault();
@@ -84,11 +84,13 @@ export class RegexExtractorView extends ItemView {
             }
 		});
 
-        // Aktuell ausgeblendet
-        // const typesContainer = document.createElement('div');
-        // typesContainer.id = 'typesContainer'
-        // typesContainer.classList.add('typesContainer');
-        // viewContent.appendChild(typesContainer);
+        // Field Types
+        const regexTypeNames: string[] = getRegexTypeNames();
+        regexTypeNames.forEach((regexTypeName) => {
+            const fieldTypeOption = fieldTypeDropDown.createEl("option");
+            fieldTypeOption.value = regexTypeName;
+            fieldTypeOption.text = regexTypeName;
+        })
 
         const parsedFieldsContainer = document.createElement('div');
         parsedFieldsContainer.id = 'parsedFieldsContainer'
