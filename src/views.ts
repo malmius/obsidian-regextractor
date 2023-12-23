@@ -1,6 +1,6 @@
-import { WorkspaceLeaf, ItemView, setIcon } from "obsidian";
+import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer } from "obsidian";
 import RegexExtractorPlugin from "./main";
-import { Parser } from "./parser";
+import { Parser, ParsedExtract } from "./parser";
 import { REGEX_TYPES, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
 import { types } from "util";
 
@@ -151,7 +151,7 @@ export class RegexExtractorView extends ItemView {
             const fieldsMatches = await parser.parseFields(type);
             const parsedContentTable = document.createElement("table");
             fieldsMatches.forEach((fieldmatch) => {
-                const tableRow = fieldmatch.toTableLine(filter)
+                const tableRow = this.extractToTableLine(fieldmatch, filter)
                 if (tableRow) {
                     parsedContentTable.appendChild(tableRow);
                 }})
@@ -167,7 +167,7 @@ export class RegexExtractorView extends ItemView {
             const parser = new Parser(this.plugin);
             const fieldsMatches = await parser.parseFields(type);
             fieldsMatches.forEach((fieldmatch) => {
-                const card = fieldmatch.toCard(filter);
+                const card = this.extractToCard(fieldmatch, filter);
                 if (card) {
                     parentElement.appendChild(card);
                 }})
@@ -187,6 +187,50 @@ export class RegexExtractorView extends ItemView {
         })
 
         return fieldElement;
+    }
+
+    extractToCard(extract: ParsedExtract, filter?: string): Element | null {
+        if (filter) {
+            const filterLowerCase = filter.toLowerCase();
+            if (!getRegexTypeNames().includes(filterLowerCase)) {
+                if (!extract.matches[extract.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
+                    return null;
+                }
+            }
+        }
+        
+        const regExtractorCard = document.createElement("div");
+        regExtractorCard.classList.add('regExtractorCard');
+        const contentString = extract.matches[extract.regExType.contentGroupIndex];
+        regExtractorCard.innerHTML = contentString;
+        return regExtractorCard;
+    }
+
+    extractToTableLine(extract: ParsedExtract, filter?: string): Element | null {
+        // console.log('tablefilter: ' + filter);
+        if (filter) {
+            const filterLowerCase = filter.toLowerCase();
+            if (!getRegexTypeNames().includes(filterLowerCase)) {
+                if (!extract.matches[extract.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
+                    return null;
+                }
+            }
+        }
+        const tableRow = document.createElement("tr");
+
+        // linenumber
+        const columnLineNumber = document.createElement("td");
+        columnLineNumber.innerHTML = extract.lineNumber.toString();
+        tableRow.appendChild(columnLineNumber);
+
+        // parsedelement
+        const columnParsedContent = document.createElement("td");
+        const contentString = extract.matches[extract.regExType.contentGroupIndex];
+
+        // columnParsedContent.createSpan("extractor-element-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, this.plugin.app.workspace.getActiveViewOfType(VIEW_TYPES.DEFAULT_VIEW), this.plugin)};
+        columnParsedContent.innerHTML = contentString;
+        tableRow.appendChild(columnParsedContent);
+        return tableRow;
     }
 
 }

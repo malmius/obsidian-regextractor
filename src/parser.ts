@@ -65,7 +65,7 @@ export class Parser {
     }
 }
 
-class ParsedExtract {
+export class ParsedExtract {
     lineNumber: number;
     regExType: RegexType;
     matches: string[];
@@ -74,50 +74,6 @@ class ParsedExtract {
         this.lineNumber = lineNumber;
         this.regExType = regExType;
         this.matches = matches;
-    }
-
-    toCard(filter?: string): Element | null {
-        if (filter) {
-            const filterLowerCase = filter.toLowerCase();
-            if (!getRegexTypeNames().includes(filterLowerCase)) {
-                if (!this.matches[this.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
-                    return null;
-                }
-            }
-        }
-        
-        const regExtractorCard = document.createElement("div");
-        regExtractorCard.classList.add('regExtractorCard');
-        const contentString = this.matches[this.regExType.contentGroupIndex];
-        regExtractorCard.innerHTML = contentString;
-        return regExtractorCard;
-    }
-
-    toTableLine(filter?: string): Element | null {
-        // console.log('tablefilter: ' + filter);
-        if (filter) {
-            const filterLowerCase = filter.toLowerCase();
-            if (!getRegexTypeNames().includes(filterLowerCase)) {
-                if (!this.matches[this.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
-                    return null;
-                }
-            }
-        }
-        const tableRow = document.createElement("tr");
-
-        // linenumber
-        const columnLineNumber = document.createElement("td");
-        columnLineNumber.innerHTML = this.lineNumber.toString();
-        tableRow.appendChild(columnLineNumber);
-
-        // parsedelement
-        const columnParsedContent = document.createElement("td");
-        const contentString = this.matches[this.regExType.contentGroupIndex];
-
-        // columnParsedContent.createSpan("extractor-element-text"), (el) => {MarkdownRenderer.render(this.plugin.app, contentString, el, this.plugin.)};
-        columnParsedContent.innerHTML = contentString;
-        tableRow.appendChild(columnParsedContent);
-        return tableRow;
     }
 
     toString() {
