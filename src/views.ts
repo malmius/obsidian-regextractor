@@ -10,7 +10,7 @@ enum LAYOUT_TYPE {'TABLE', 'CARD'}
 export class RegexExtractorView extends ItemView {
 	private plugin: RegexExtractorPlugin;
 	private eventListeners: Array<{ element: HTMLElement; handler: (event: MouseEvent) => void }> = [];
-    private currentLayout: LAYOUT_TYPE = LAYOUT_TYPE.TABLE;
+    private currentLayout: LAYOUT_TYPE = LAYOUT_TYPE.CARD;
 
 	constructor(leaf: WorkspaceLeaf, plugin: RegexExtractorPlugin) {
 		super(leaf);
@@ -203,7 +203,23 @@ export class RegexExtractorView extends ItemView {
         const regExtractorCard = document.createElement("div");
         regExtractorCard.classList.add('regExtractorCard');
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
-        regExtractorCard.innerHTML = contentString;
+        const contentIsLong: boolean = contentString.length >= 50;
+
+        if (contentIsLong) {
+            const truncatedContentString = contentString.substring(0, 40) + "...";
+            regExtractorCard.innerHTML = truncatedContentString;
+
+            // Toggle between shortened and long version
+            regExtractorCard.addEventListener("click", (event: MouseEvent) => {
+                if (regExtractorCard.innerHTML == truncatedContentString) {
+                    regExtractorCard.innerHTML = contentString;
+                } else {
+                    regExtractorCard.innerHTML = truncatedContentString;
+                }
+		}); 
+        } else {
+            regExtractorCard.innerHTML = contentString;
+        }
         return regExtractorCard;
     }
 
