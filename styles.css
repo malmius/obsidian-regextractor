@@ -20,15 +20,6 @@ If your plugin does not need CSS, delete this file.
     padding: 1em;
 }
 
-.parsedContentContainer {
-}
-
-.parsedContentContainer > table > tr > td {
-}
-
-.parsedContentContainer > table > tr > td:first-child {
-}
-
 .regExtractorCard {
     background-color: gainsboro;
     box-shadow: var(--background-modifier-box-shadow) 1px 1px 2px;

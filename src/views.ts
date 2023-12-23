@@ -2,7 +2,6 @@ import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
 import { REGEX_TYPES, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
-import { types } from "util";
 
 enum LAYOUT_TYPE {'TABLE', 'CARD'}
 
