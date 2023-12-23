@@ -76,6 +76,23 @@ class ParsedExtract {
         this.matches = matches;
     }
 
+    toCard(filter?: string): Element | null {
+        if (filter) {
+            const filterLowerCase = filter.toLowerCase();
+            if (!getRegexTypeNames().includes(filterLowerCase)) {
+                if (!this.matches[this.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
+                    return null;
+                }
+            }
+        }
+        
+        const regExtractorCard = document.createElement("div");
+        regExtractorCard.classList.add('regExtractorCard');
+        const contentString = this.matches[this.regExType.contentGroupIndex];
+        regExtractorCard.innerHTML = contentString;
+        return regExtractorCard;
+    }
+
     toTableLine(filter?: string): Element | null {
         // console.log('tablefilter: ' + filter);
         if (filter) {

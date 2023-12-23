@@ -28,3 +28,17 @@ If your plugin does not need CSS, delete this file.
 
 .parsedContentContainer > table > tr > td:first-child {
 }
+
+.regExtractorCard {
+    background-color: gainsboro;
+    box-shadow: var(--background-modifier-box-shadow) 1px 1px 2px;
+    padding: 1em;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.nav-action-button {
+    display: inline-block;
+    padding-right: 10px;
+    color: var(--icon-color);
+}

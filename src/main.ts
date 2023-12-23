@@ -31,7 +31,7 @@ export default class RegexExtractorPlugin extends Plugin {
 			for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPES.DEFAULT_VIEW)) {
 				const view = leaf.view;
 				if (view instanceof RegexExtractorView) {
-					view.reloadRegexExtractorView();
+					view.reloadRegexExtractorViewDefault();
 				}
 			}
 		}));

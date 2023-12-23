@@ -4,11 +4,14 @@ import { Parser } from "./parser";
 import { REGEX_TYPES, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
 import { types } from "util";
 
+enum LAYOUT_TYPE {'TABLE', 'CARD'}
+
 //import { t } from "./lang/helper"
 
 export class RegexExtractorView extends ItemView {
 	private plugin: RegexExtractorPlugin;
 	private eventListeners: Array<{ element: HTMLElement; handler: (event: MouseEvent) => void }> = [];
+    private currentLayout: LAYOUT_TYPE = LAYOUT_TYPE.TABLE;
 
 	constructor(leaf: WorkspaceLeaf, plugin: RegexExtractorPlugin) {
 		super(leaf);
@@ -28,10 +31,10 @@ export class RegexExtractorView extends ItemView {
         // Load Basic View Elements (Buttons, Divs)
         this.loadViewStructure(this.contentEl);
         // Load Specific View Element
-        this.reloadRegexExtractorView();
+        this.reloadRegexExtractorViewDefault();
     }
 
-    reloadRegexExtractorView() {
+    reloadRegexExtractorViewDefault() {
         const typesContainer = document.getElementById('typesContainer')
         const fieldsContainer = document.getElementById('parsedFieldsContainer');
         const contentContainer = document.getElementById('parsedContentContainer');
@@ -42,7 +45,9 @@ export class RegexExtractorView extends ItemView {
             this.drawFields(fieldsContainer); 
         }
         if (contentContainer) {
-            this.drawParsedContentTable(contentContainer);
+            this.drawContent(contentContainer, this.currentLayout);
+            // this.drawParsedContentTable(contentContainer);
+            // this.drawParsedContentCard(contentContainer);
         }
     }
 
@@ -53,11 +58,29 @@ export class RegexExtractorView extends ItemView {
         // add icon for refresh
 		const navActionButtonRefresh = viewContent.createEl("div", "nav-action-button");
 		setIcon(navActionButtonRefresh, "refresh-cw");
+		const navActionButtonShowAsCard = viewContent.createEl("div", "nav-action-button");
+		setIcon(navActionButtonShowAsCard, "panel-top");
+        const navActionButtonShowAsTable = viewContent.createEl("div", "nav-action-button");
+		setIcon(navActionButtonShowAsTable, "table");
+
 
 		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
-            const parsedFieldsContainer = document.getElementById('parsedFieldsContainer');
-            if (parsedFieldsContainer) {
-                this.drawFields(parsedFieldsContainer);
+            this.reloadRegexExtractorViewDefault();
+		});
+
+        navActionButtonShowAsCard.addEventListener("click", (event: MouseEvent) => {
+            this.currentLayout = LAYOUT_TYPE.CARD;
+            const parsedContentContainer = document.getElementById('parsedContentContainer');
+            if (parsedContentContainer) {
+                this.drawContent(parsedContentContainer, this.currentLayout);
+            }
+		});
+
+        navActionButtonShowAsTable.addEventListener("click", (event: MouseEvent) => {
+            this.currentLayout = LAYOUT_TYPE.TABLE;
+            const parsedContentContainer = document.getElementById('parsedContentContainer');
+            if (parsedContentContainer) {
+                this.drawContent(parsedContentContainer, this.currentLayout);
             }
 		});
 
@@ -105,6 +128,19 @@ export class RegexExtractorView extends ItemView {
 
     }
 
+    protected async drawContent(parentElement: Element, layoutType: LAYOUT_TYPE, filter?: string) {
+        switch (layoutType) {
+            case LAYOUT_TYPE.CARD:
+                this.drawParsedContentCard(parentElement, filter);
+                break;
+            case LAYOUT_TYPE.TABLE:
+                this.drawParsedContentTable(parentElement, filter)
+                break;
+            default:
+                break;
+        }
+    }
+
     protected async drawParsedContentTable(parentElement: Element, filter?: string) {
         parentElement.innerHTML = '';
 
@@ -123,6 +159,21 @@ export class RegexExtractorView extends ItemView {
         });
     }
 
+    protected async drawParsedContentCard(parentElement: Element, filter?: string) {
+        parentElement.innerHTML = '';
+        const regexTypes = Object.values(REGEX_TYPES);
+
+        regexTypes.forEach(async (type) => {
+            const parser = new Parser(this.plugin);
+            const fieldsMatches = await parser.parseFields(type);
+            fieldsMatches.forEach((fieldmatch) => {
+                const card = fieldmatch.toCard(filter);
+                if (card) {
+                    parentElement.appendChild(card);
+                }})
+        });
+    }
+
     makePill(fieldname: string): Element {
         const fieldElement = createEl("div", "fieldElement");
         fieldElement.setAttribute("fieldname", fieldname);
@@ -131,7 +182,7 @@ export class RegexExtractorView extends ItemView {
         fieldElement.addEventListener('click', () => {
             const contentContainer = document.getElementById('parsedContentContainer');
             if (contentContainer) {
-                this.drawParsedContentTable(contentContainer, fieldname);
+                this.drawContent(contentContainer, this.currentLayout, fieldname);
             }
         })
 
