@@ -20,18 +20,10 @@ export class Parser {
     getDistinctFieldNames(fieldsArray: ParsedExtract[]): string[] {
         const distinctFieldNames: string[] = [];
         fieldsArray.forEach((regexExtract) => {
-            let fieldName: string;
-            const titleIndex = regexExtract.regExType.titleGroupIndex;
-            if (titleIndex == -1) {
-                fieldName = regexExtract.regExType.type;
-                distinctFieldNames.push(fieldName);
-            }
-            else {
-                fieldName = regexExtract.matches[titleIndex].toLowerCase();
-                if (!distinctFieldNames.includes(fieldName)) {
+            const fieldName = regexExtract.getName().toLocaleLowerCase();
+            if (!distinctFieldNames.includes(fieldName)) {
                     distinctFieldNames.push(fieldName);
                 }
-            }
         })
         return distinctFieldNames;
     }
@@ -79,5 +71,13 @@ export class ParsedExtract {
 
     toString() {
         return `linenumber: ${this.lineNumber}, matches: ${this.matches}`
+    }
+
+    getName() {
+        if (this.regExType.titleGroupIndex == -1) {
+            return this.regExType.type;
+        } else {
+            return this.matches[this.regExType.titleGroupIndex];
+        }
     }
 }
