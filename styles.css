@@ -44,7 +44,7 @@ If your plugin does not need CSS, delete this file.
     text-align: right;
 }
 
-.markdown-text {
+.cardMarkdownText {
     grid-area: content;
     padding: 0.5em;
 }
