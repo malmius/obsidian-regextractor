@@ -20,7 +20,7 @@ npm run build
 ## Roadmap
 
 - [x] Weitere Regex hinzufügen (weitere Fields, Highlights)
-- [ ] Markdown-Renderer verwenden
+- [x] Markdown-Renderer verwenden
 - [ ] Link zur Editor Position
 
 ### Adjustments
