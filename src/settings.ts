@@ -5,6 +5,7 @@ import RegexExtractorPlugin from "./main";
 
 export interface RegexEctractorPluginSettings {
 	parseParagraph: boolean;
+    ignoreFieldsList: string;
 }
 
 export const DEFAULT_SETTINGS: RegexEctractorPluginSettings = {
@@ -35,5 +36,16 @@ export class RegexEctractorPluginSettingsTab extends PluginSettingTab {
                 this.plugin.app.workspace.trigger("file-open");
             })
         );
-        }
+
+        new Setting(containerEl)
+        .setName('Ignore Fields')
+        .setDesc('Ignose these DataviewFields from Extractor View')
+        .addTextArea(ignoreFieldsList => ignoreFieldsList
+            .setValue(this.plugin.settings.ignoreFieldsList)
+            .onChange((ignoreFieldsList) => {
+                this.plugin.settings.ignoreFieldsList = ignoreFieldsList;
+                this.plugin.saveSettings();
+                this.plugin.app.workspace.trigger("file-open");
+            })
+        )}
 }
