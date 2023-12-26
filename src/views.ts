@@ -279,7 +279,7 @@ export class RegexExtractorView extends ItemView {
 
         const extractTypeName = ParsedExtract.normalizeString(extract.getName());
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
-        const contentIsLong: boolean = contentString.length >= 50;
+        const contentIsLong: boolean = contentString.length >= 200;
 
         const extractTypeNameTag = regExtractorCard.createEl("div", "extractTypeNameTag");
         extractTypeNameTag.addClass("extractTypeNameTag");
@@ -289,7 +289,7 @@ export class RegexExtractorView extends ItemView {
         cardMarkdownText.addClass("cardMarkdownText");
 
         if (contentIsLong) {
-            const truncatedContentString = contentString.substring(0, 40) + "...";
+            const truncatedContentString = contentString.substring(0, 180) + "...";
 
             regExtractorCard.setAttribute("isShortened", "true");
             cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});

@@ -14,6 +14,7 @@ If your plugin does not need CSS, delete this file.
     padding: 0.2em 0.8em 0.3em 0.8em;
     border-radius: 10px;
     margin: 3px;
+    font-size: 0.8rem;
 }
 
 .parsedFieldsContainer {
@@ -45,7 +46,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .cardMarkdownText {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     grid-area: content;
     padding: 0.5em 0.5em 0.5em 1em;
 }
