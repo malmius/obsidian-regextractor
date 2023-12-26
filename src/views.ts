@@ -295,14 +295,15 @@ export class RegexExtractorView extends ItemView {
 
             // Toggle between shortened and long version
             regExtractorCard.addEventListener("click", (event: MouseEvent) => {
-                cardMarkdownText.innerHTML = '';
-                if (regExtractorCard.getAttribute("isShortened") == "true") {
-                    regExtractorCard.setAttribute("isShortened", "false");
-                    cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
-                } else {
-                    regExtractorCard.setAttribute("isShortened", "true");                    
-                    cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
-                }
+                this.toggleShortLong(regExtractorCard, contentString, truncatedContentString);
+                // cardMarkdownText.innerHTML = '';
+                // if (regExtractorCard.getAttribute("isShortened") == "true") {
+                //     regExtractorCard.setAttribute("isShortened", "false");
+                //     cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
+                // } else {
+                //     regExtractorCard.setAttribute("isShortened", "true");                    
+                //     cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
+                // }
             }); 
         } else {
             cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
@@ -345,6 +346,20 @@ export class RegexExtractorView extends ItemView {
             }
         }); 
         return regExtractorCard;
+    }
+
+    toggleShortLong(cardToToggle:HTMLElement, textShort:string, textLong:string) {
+        const cardMarkdownText = cardToToggle.querySelectorAll('.cardMarkdownText');
+        cardMarkdownText.forEach(element => {
+            element.innerHTML = '';
+            if (cardToToggle.getAttribute("isShortened") == "true") {
+                cardToToggle.setAttribute("isShortened", "false");
+                element.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, textLong, el, '', this.plugin)});
+            } else {
+                cardToToggle.setAttribute("isShortened", "true");                    
+                element.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, textShort, el, '', this.plugin)});
+            }
+        });
     }
 
     extractToTableLine(extract: ParsedExtract, filter?: string): Element | null {
