@@ -60,5 +60,5 @@ If your plugin does not need CSS, delete this file.
 }
 
 .selectedPill {
-    background-color: red;
+    background-color: var(--color-accent-1);
 }

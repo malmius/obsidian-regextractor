@@ -60,6 +60,7 @@ export class RegexExtractorView extends ItemView {
             element.removeClass('selectedPill');
         });
 
+        this.refreshParsedExtracts();
     }
 
     onload(): void {
@@ -106,10 +107,7 @@ export class RegexExtractorView extends ItemView {
             const fieldTypeOption = fieldTypeDropDown.createEl("option");
             fieldTypeOption.value = regexTypeName;
             fieldTypeOption.text = regexTypeName;
-        })
-
-        fieldTypeDropDown.addEventListener('change', () => {this.filterCardsByType(fieldTypeDropDown.value);
-        });        
+        })        
 
         const parsedFieldsContainer = document.createElement('div');
         parsedFieldsContainer.id = 'parsedFieldsContainer'
@@ -120,13 +118,28 @@ export class RegexExtractorView extends ItemView {
         parsedContentContainer.id = 'parsedContentContainer'
         parsedContentContainer.classList.add('parsedContentContainer');
         viewContent.appendChild(parsedContentContainer);
+
+        fieldTypeDropDown.addEventListener('change', () => {
+            this.refreshParsedExtracts();
+        });
+    }
+
+    protected refreshParsedExtracts() {
+        const parsedFieldsContainer = document.getElementById('parsedFieldsContainer');
+        if (fieldTypeDropDown.value == 'field') {
+            parsedFieldsContainer?.setAttribute("ishidden", "false");
+            parsedFieldsContainer.style.display = 'block';
+        } else {
+            parsedFieldsContainer?.setAttribute("ishidden", "true");
+            parsedFieldsContainer.style.display = 'none';
+        }
+        this.filterCardsByType(fieldTypeDropDown.value);
+        this.filterCardsByLabel();
     }
 
 
     protected filterCardsByType(selectedValue:string) {
         const elements = document.querySelectorAll('.regExtractorCard');
-        console.log('filter by type elements:');
-        console.log(elements);
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
                 // 'all' ist ausgewählt
@@ -144,6 +157,9 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected filterCardsByLabel() {
+        if (document.getElementById('parsedFieldsContainer')?.getAttribute("ishidden") == "true") {
+            return;
+        }
         const selectedPillsElements = document.querySelectorAll('.fieldElement.selectedPill');
         const selectedFieldNames = Array.from(selectedPillsElements).map(element => element.getAttribute("fieldname")?.toLowerCase());
         const elements = document.querySelectorAll('.regExtractorCard');
