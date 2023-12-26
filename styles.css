@@ -55,10 +55,14 @@ If your plugin does not need CSS, delete this file.
     color: var(--icon-color);
 }
 
-.regExtractorCard["cardtype"="qa"]:hover {
+.regExtractorCard[cardtype="qa"]:hover {
     /* transform: rotateY(180deg); */
 }
 
 .selectedPill {
     background-color: var(--color-accent-1);
+}
+
+.regExtractorCard:not([cardtype="regular"]) {
+    border-right: solid 8px var(--color-accent-1);
 }
