@@ -45,6 +45,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .cardMarkdownText {
+    font-size: 0.8rem;
     grid-area: content;
     padding: 0.5em;
 }

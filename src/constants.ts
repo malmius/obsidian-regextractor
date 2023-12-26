@@ -50,7 +50,7 @@ export const REGEX_TYPES = {
         '==(.*?)==',
         'HIGHLIGHT',
         false,
-        ['total'],
+        ['total', 'content'],
         -1, // Kein Name
         1
     ),
@@ -61,7 +61,15 @@ export const REGEX_TYPES = {
         ['total', 'Q', 'Qcontent', 'A', 'Acontent'],
         1, // Kein Name
         2
-    )
+    ),
+    'MD_COMMENTS': new RegexType(
+      '%%(.*?)%%',
+      'COMMENT',
+      false,
+      ['total', 'content'],
+      -1, // Kein Name
+      1
+  )
 
     
   };
