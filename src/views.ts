@@ -56,6 +56,12 @@ export class RegexExtractorView extends ItemView {
             // this.drawParsedContentTable(contentContainer);
             // this.drawParsedContentCard(contentContainer);
         }
+        const fieldTypeDropDown = document.getElementById("fieldTypeDropDown");
+        if (fieldTypeDropDown) {
+            fieldTypeDropDown.value = 'all';
+            this.filterForType(fieldTypeDropDown);
+        }
+
     }
 
     onload(): void {
@@ -70,6 +76,7 @@ export class RegexExtractorView extends ItemView {
         const navActionButtonShowAsTable = viewContent.createEl("div", "nav-action-button");
 		setIcon(navActionButtonShowAsTable, "table");
         const fieldTypeDropDown = viewContent.createEl("select", "fieldTypeDropDown");
+        fieldTypeDropDown.id = "fieldTypeDropDown";
 
 		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
             this.reloadRegexExtractorViewDefault();
@@ -93,25 +100,17 @@ export class RegexExtractorView extends ItemView {
 
         // Field Types
         const regexTypeNames: string[] = getRegexTypeNames();
+        const fieldTypeOption = fieldTypeDropDown.createEl("option");
+        fieldTypeOption.value = 'all';
+        fieldTypeOption.text = 'all';
+        fieldTypeOption.setAttribute("selected", "selected");
         regexTypeNames.forEach((regexTypeName) => {
             const fieldTypeOption = fieldTypeDropDown.createEl("option");
             fieldTypeOption.value = regexTypeName;
             fieldTypeOption.text = regexTypeName;
         })
 
-        fieldTypeDropDown.addEventListener('change', () => {
-            const selectedValue = fieldTypeDropDown.value;
-            const elements = document.querySelectorAll('.regExtractorCard');
-            elements.forEach(function(element) {
-                console.log(element.getAttribute('regextype'));
-                if (element instanceof HTMLElement) {
-                    if (element.getAttribute('regextype') == selectedValue) {
-                        element.style.display = 'grid';
-                    } else {
-                        element.style.display = 'none';
-                    }
-                }
-            })
+        fieldTypeDropDown.addEventListener('change', () => {this.filterForType(fieldTypeDropDown)
         });        
 
         const parsedFieldsContainer = document.createElement('div');
@@ -131,6 +130,21 @@ export class RegexExtractorView extends ItemView {
         types.forEach(type => {
             const typePill = this.makePill(type);
             parentElement.appendChild(typePill);
+        })
+    }
+
+    protected filterForType(selectElement:HTMLSelectElement) {
+        const selectedValue = selectElement.value;
+        const elements = document.querySelectorAll('.regExtractorCard');
+        elements.forEach(function(element) {
+            console.log(element.getAttribute('regextype'));
+            if (element instanceof HTMLElement) {
+                if (element.getAttribute('regextype') == selectedValue) {
+                    element.style.display = 'grid';
+                } else {
+                    element.style.display = 'none';
+                }
+            }
         })
     }
 
