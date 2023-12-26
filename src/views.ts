@@ -37,12 +37,8 @@ export class RegexExtractorView extends ItemView {
     }
 
     reloadRegexExtractorViewDefault() {
-        const typesContainer = document.getElementById('typesContainer')
         const fieldsContainer = document.getElementById('parsedFieldsContainer');
         const contentContainer = document.getElementById('parsedContentContainer');
-        if (typesContainer) {
-            this.drawTypes(typesContainer);
-        }
         if (fieldsContainer) {
             this.drawFields(fieldsContainer); 
         }
@@ -112,7 +108,7 @@ export class RegexExtractorView extends ItemView {
             fieldTypeOption.text = regexTypeName;
         })
 
-        fieldTypeDropDown.addEventListener('change', () => {this.filterCardsByType(fieldTypeDropDown.value)
+        fieldTypeDropDown.addEventListener('change', () => {this.filterCardsByType(fieldTypeDropDown.value);
         });        
 
         const parsedFieldsContainer = document.createElement('div');
@@ -126,14 +122,6 @@ export class RegexExtractorView extends ItemView {
         viewContent.appendChild(parsedContentContainer);
     }
 
-    protected drawTypes(parentElement: Element) {
-        parentElement.innerHTML = '';
-        const types = getRegexTypeNames();
-        types.forEach(type => {
-            const typePill = this.makePill(type);
-            parentElement.appendChild(typePill);
-        })
-    }
 
     protected filterCardsByType(selectedValue:string) {
         const elements = document.querySelectorAll('.regExtractorCard');
@@ -147,6 +135,21 @@ export class RegexExtractorView extends ItemView {
                     return;
                 }
                 if (element.getAttribute('regextype') == selectedValue) {
+                    element.style.display = 'grid';
+                } else {
+                    element.style.display = 'none';
+                }
+            }
+        })
+    }
+
+    protected filterCardsByLabel() {
+        const selectedPillsElements = document.querySelectorAll('.fieldElement.selectedPill');
+        const selectedFieldNames = Array.from(selectedPillsElements).map(element => element.getAttribute("fieldname")?.toLowerCase());
+        const elements = document.querySelectorAll('.regExtractorCard');
+        elements.forEach(function(element) {
+            if (element instanceof HTMLElement) {
+                if (selectedFieldNames.length == 0 || selectedFieldNames.includes(element.getAttribute("extractlabel")?.toLowerCase())) {
                     element.style.display = 'grid';
                 } else {
                     element.style.display = 'none';
@@ -235,10 +238,7 @@ export class RegexExtractorView extends ItemView {
 
         fieldElement.addEventListener('click', () => {
             fieldElement.classList.toggle('selectedPill');
-            const contentContainer = document.getElementById('parsedContentContainer');
-            if (contentContainer) {
-                this.drawContent(contentContainer, this.currentLayout);
-            }
+            this.filterCardsByLabel();
         })
 
         return fieldElement;
