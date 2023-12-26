@@ -28,7 +28,7 @@ export class RegexExtractorView extends ItemView {
     // Wird verwendet beim Öffnen der View
     protected async onOpen(): Promise<void> {
 
-        console.log(this.getViewType());
+        // console.log(this.getViewType());
 
         // Load Basic View Elements (Buttons, Divs)
         this.loadViewStructure(this.contentEl);
@@ -182,7 +182,7 @@ export class RegexExtractorView extends ItemView {
         regexTypes.forEach(async (type) => {
             const parser = new Parser(this.plugin);
             const fieldsMatches = await parser.parseFields(type);
-            const distinctFieldnames = parser.getDistinctFieldNames(fieldsMatches);
+            const distinctFieldnames = await parser.getDistinctFieldNames(fieldsMatches);
             let distinctFieldnamesAfterSettings:string[] = distinctFieldnames;
 
             try {
