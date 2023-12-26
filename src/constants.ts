@@ -17,7 +17,14 @@ export class RegexType {
     matchByLine: boolean;
     renderType: RENDERTYPE;
 
-    constructor(regEx: string, type: string, hasTitle: boolean, regExGroups: string[], titleGroupIndex: number, contentGroupIndex: number, matchByLine: boolean) {
+    constructor(regEx: string
+      , type: string
+      , hasTitle: boolean
+      , regExGroups: string[]
+      , titleGroupIndex: number
+      , contentGroupIndex: number
+      , matchByLine: boolean
+      , renderType: RENDERTYPE) {
       this.regEx = regEx;
       this.type = type;
       this.hasTitle = hasTitle;
@@ -25,6 +32,7 @@ export class RegexType {
       this.titleGroupIndex = titleGroupIndex;
       this.contentGroupIndex = contentGroupIndex;
       this.matchByLine = matchByLine;
+      this.renderType = renderType;
     }
   }
   
@@ -36,7 +44,8 @@ export const REGEX_TYPES = {
       ['total', 'fieldname', 'fieldcontent'],
       1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
       2,
-      true
+      true,
+      RENDERTYPE.REGULAR
     ),
     'FIELD_SQUAREBRACKETS': new RegexType(
         // '\\[(\\w+)::(.*?)\\]',
@@ -46,7 +55,8 @@ export const REGEX_TYPES = {
         ['total', 'fieldname', 'fieldcontent'],
         1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
         2,
-        true
+        true,
+        RENDERTYPE.REGULAR
       ),
       'FIELD_NOBRACKETS': new RegexType(
         '^([^(\\[]*)::(.*)',
@@ -55,7 +65,8 @@ export const REGEX_TYPES = {
         ['total', 'fieldname', 'fieldcontent'],
         1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
         2,
-        true
+        true,
+        RENDERTYPE.REGULAR
       ),
     'HIGHLIGHT': new RegexType(
         '==(.*?)==',
@@ -64,7 +75,8 @@ export const REGEX_TYPES = {
         ['total', 'content'],
         -1, // Kein Name
         1,
-        true
+        true,
+        RENDERTYPE.REGULAR
     ),
     'Q&A': new RegexType(
         '^(#Q)[ ]*[:]{0,2}[ ]*((?:.+\n)*)\n*(#A)[ ]*[:]{0,2}[ ]*(.+(?:\n(?:^.{1,3}$|^.{4}(?<!<!--).*))*)',
@@ -73,7 +85,8 @@ export const REGEX_TYPES = {
         ['total', 'FrontLabel', 'FrontContent', 'BackLabel', 'BackContent'],
         1, // Kein Name
         2,
-        false
+        false,
+        RENDERTYPE.FRONT_BACK
     ),
     'MD_COMMENTS': new RegexType(
       '%%(.*?)%%',
@@ -82,17 +95,29 @@ export const REGEX_TYPES = {
       ['total', 'content'],
       -1, // Kein Name
       1,
-      true
+      true,
+      RENDERTYPE.REGULAR
     ),
     'OBSIDIAN_CALLOUTS': new RegexType(
       '^>\\s+\\[!(.*)\\]\\s?(.*)\n^>\\s+(.*)',
       'CALLOUT',
       false,
       ['total', 'calloutname', 'callouttitle', 'calloutcontent'],
-      1, // Kein Name
+      1,
       3,
-      false
-    )  
+      false,
+      RENDERTYPE.REGULAR
+    ),
+    'SYNONYMS': new RegexType(
+      '^#Synonym(?:::)?\\s+(.*)\\s(?:=|:::)\\s(.*)',
+      'SYNONYM',
+      false,
+      ['total', 'FrontContent', 'BackContent'],
+      -1, // Kein Name
+      3,
+      true,
+      RENDERTYPE.FRONT_BACK
+    )
   };
 
 export function getRegexTypeNames(): string[] {
@@ -108,3 +133,4 @@ export function getRegexTypeNames(): string[] {
 export function getFilterableRegexTypes(): RegexType[] {
     return Object.values(REGEX_TYPES).filter(regexType => regexType.hasTitle == true);
 }
+

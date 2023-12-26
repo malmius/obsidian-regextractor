@@ -1,7 +1,7 @@
 import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
-import { REGEX_TYPES, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
+import { REGEX_TYPES, RENDERTYPE, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
 
 enum LAYOUT_TYPE {'TABLE', 'CARD'}
 
@@ -240,11 +240,11 @@ export class RegexExtractorView extends ItemView {
             const fieldsMatches = await parser.parseFields(type);
                 fieldsMatches.forEach((fieldmatch) => {
                     let card: Element | null;
-                    if (type.type == 'Q&A') {
-                        card = this.extractToQACard(fieldmatch, 2, 4);
+                    if (type.renderType == RENDERTYPE.FRONT_BACK) {
+                        card = this.extractToFrontBackCard(fieldmatch);
                         card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
                     }
-                    else {
+                    else if (type.renderType == RENDERTYPE.REGULAR) {
                         card = this.extractToRegularCard(fieldmatch);
                         card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
                     }
@@ -297,14 +297,6 @@ export class RegexExtractorView extends ItemView {
             // Toggle between shortened and long version
             regExtractorCard.addEventListener("click", (event: MouseEvent) => {
                 this.toggleShortLong(regExtractorCard, contentString, truncatedContentString);
-                // cardMarkdownText.innerHTML = '';
-                // if (regExtractorCard.getAttribute("isShortened") == "true") {
-                //     regExtractorCard.setAttribute("isShortened", "false");
-                //     cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
-                // } else {
-                //     regExtractorCard.setAttribute("isShortened", "true");                    
-                //     cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
-                // }
             }); 
         } else {
             cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
@@ -313,7 +305,7 @@ export class RegexExtractorView extends ItemView {
         return regExtractorCard;
     }
 
-    extractToQACard(extract: ParsedExtract, frontIndex:number, backIndex:number): Element | null {
+    extractToFrontBackCard(extract: ParsedExtract): Element | null {
 
         const regExtractorCard = document.createElement("div");
         regExtractorCard.addClass('regExtractorCard');
@@ -322,8 +314,23 @@ export class RegexExtractorView extends ItemView {
         regExtractorCard.setAttribute("cardSide", "front");
 
         const extractTypeName = ParsedExtract.normalizeString(extract.getName());
-        const frontContentString = extract.matches[frontIndex];
-        const backContentString = extract.matches[backIndex];
+
+        let frontLabelString:string;
+        if (extract.checkIfGroupnameExists('FrontLabel')) {
+            frontLabelString = ParsedExtract.normalizeString(extract.getMatchByGroupname('FrontLabel'));
+        } else {
+            frontLabelString = ParsedExtract.normalizeString(extract.getName())
+        }
+
+        let backLabelString:string;
+        if (extract.checkIfGroupnameExists('BackLabel')) {
+            backLabelString = ParsedExtract.normalizeString(extract.getMatchByGroupname('BackLabel'));
+        } else {
+            backLabelString = ParsedExtract.normalizeString(extract.getName())
+        }
+
+        const frontContentString = extract.getMatchByGroupname('FrontContent');
+        const backContentString = extract.getMatchByGroupname('BackContent');
 
         const extractTypeNameTag = regExtractorCard.createEl("div", "extractTypeNameTag");
         extractTypeNameTag.addClass("extractTypeNameTag");
@@ -338,14 +345,12 @@ export class RegexExtractorView extends ItemView {
         regExtractorCard.addEventListener("click", (event: MouseEvent) => {
             cardMarkdownText.innerHTML = '';
             if (regExtractorCard.getAttribute("cardSide") == "front") {
-                const label = ParsedExtract.normalizeString(extract.getMatchByGroupname('BackLabel'))
-                regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = label;
                 regExtractorCard.setAttribute("cardSide", "back");
+                regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = backLabelString;
                 cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, backContentString, el, '', this.plugin)});
             } else {
-                const label = ParsedExtract.normalizeString(extract.getMatchByGroupname('FrontLabel'))
-                regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = label;
                 regExtractorCard.setAttribute("cardSide", "front");                    
+                regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = frontLabelString;
                 cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, '', this.plugin)});
             }
         }); 

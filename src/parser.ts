@@ -113,7 +113,13 @@ export class ParsedExtract {
         return str.replace(/^[^a-zA-Z0-9[#]+|[^a-zA-Z0-9\]]+$/g, '').toLowerCase();
       }
 
+    // Gibt den String der RegexGruppe zurück.
     getMatchByGroupname(groupname:string) {
         return this.matches[this.regExType.regExGroups.indexOf(groupname)];
+    }
+
+    // Check, ob eine RegeGrupp für den gewählten Gruppennamen existiert.
+    checkIfGroupnameExists(groupname:string) {
+        return this.regExType.regExGroups.includes(groupname);
     }
 }
