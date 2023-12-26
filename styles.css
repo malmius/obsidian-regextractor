@@ -21,7 +21,7 @@ If your plugin does not need CSS, delete this file.
     text-align: center;
 }
 
-.regExtractorCard {
+.regExtractorCard, .regExtractorQACard {
     background-color: var(--background-primary);
     box-shadow: var(--background-modifier-box-shadow) 1px 1px 2px;
     border-radius: 5px;
@@ -53,4 +53,8 @@ If your plugin does not need CSS, delete this file.
     display: inline-block;
     padding-right: 10px;
     color: var(--icon-color);
+}
+
+.regExtractorQACard:hover {
+    /* transform: rotateY(180deg); */
 }

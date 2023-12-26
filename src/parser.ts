@@ -12,8 +12,15 @@ export class Parser {
 	}
 
     async parseFields(regexType: RegexType): Promise<ParsedExtract[]> {
-        const fileLines = await this.getLinesOfActiveFile();
-        const parsedExtracts = this.returnFieldMatches(regexType, fileLines);
+        console.log('parse fields for: ' + regexType.type);
+        let parsedExtracts: Promise<ParsedExtract[]>;
+        if (regexType.type == 'Q&A') {
+            const activeFile = await this.getContentOfActiveFile();
+            parsedExtracts = this.returnFieldMatchesByFile(regexType, activeFile);
+        } else {
+            const fileLines = await this.getLinesOfActiveFile();
+            parsedExtracts = this.returnFieldMatchesByLine(regexType, fileLines);
+        }
         return parsedExtracts;
     }
 
@@ -28,7 +35,7 @@ export class Parser {
         return distinctFieldNames;
     }
 
-    returnFieldMatches(regexType: RegexType, lines: string[]): ParsedExtract[] {
+    returnFieldMatchesByLine(regexType: RegexType, lines: string[]): ParsedExtract[] {
         const regExpression = new RegExp(regexType.regEx, "gm");
         const extracts: ParsedExtract[] = [];
         
@@ -45,6 +52,22 @@ export class Parser {
         }
         return extracts;
     }
+
+    returnFieldMatchesByFile(regexType: RegexType, fileContent: string): ParsedExtract[] {
+        const regExpression = new RegExp(regexType.regEx, "gm");
+        const extracts: ParsedExtract[] = [];
+        
+        const matches = fileContent.matchAll(regExpression);
+        if (matches) {
+            for (const match of matches) {
+                console.log("match: " + match);
+                const newExtract = new ParsedExtract(0, regexType, match);
+                extracts.push(newExtract);
+            }
+        }
+        return extracts;
+    }
+
     protected async getLinesOfActiveFile(): Promise<string[]> {
         const activeFile = this.plugin.app.workspace.getActiveFile();
         let lines: string[] = [];
@@ -55,6 +78,12 @@ export class Parser {
             }
         }
         return lines;
+    }
+
+    protected async getContentOfActiveFile(): Promise<string> {
+        const activeFile = this.plugin.app.workspace.getActiveFile();
+        const activeFileContent = await this.plugin.app.vault.cachedRead(activeFile);
+        return activeFileContent;
     }
 }
 

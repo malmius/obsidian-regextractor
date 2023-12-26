@@ -28,6 +28,8 @@ export class RegexExtractorView extends ItemView {
     // Wird verwendet beim Öffnen der View
     protected async onOpen(): Promise<void> {
 
+        console.log(this.getViewType());
+
         // Markdown Rendering Test
         // const testString = 'das ist ein **fetter Text** und ein #tag und ein [[Link]]';
         // this.contentEl.createDiv(("markdown-element"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, testString, el, '', this.plugin)});
@@ -173,13 +175,20 @@ export class RegexExtractorView extends ItemView {
         regexTypes.forEach(async (type) => {
             const parser = new Parser(this.plugin);
             const fieldsMatches = await parser.parseFields(type);
-            fieldsMatches.forEach((fieldmatch) => {
-                const card = this.extractToCard(fieldmatch, filter);
-                if (card) {
-                    parentElement.appendChild(card);
-                }})
-        });
-    }
+                fieldsMatches.forEach((fieldmatch) => {
+                    let card: Element | null;
+                    if (type.type == 'Q&A') {
+                        card = this.extractToQACard(fieldmatch, 2, 4);
+                    }
+                    else {
+                        card = this.extractToRegularCard(fieldmatch, filter);
+                    }
+                    if (card) {
+                        parentElement.appendChild(card);
+                    }
+                })
+            })
+        }
 
     makePill(fieldname: string): Element {
         const fieldElement = createEl("div", "fieldElement");
@@ -196,7 +205,7 @@ export class RegexExtractorView extends ItemView {
         return fieldElement;
     }
 
-    extractToCard(extract: ParsedExtract, filter?: string): Element | null {
+    extractToRegularCard(extract: ParsedExtract, filter?: string): Element | null {
         if (filter) {
             const filterLowerCase = filter.toLowerCase();
             if (!getRegexTypeNames().includes(filterLowerCase)) {
@@ -237,11 +246,46 @@ export class RegexExtractorView extends ItemView {
                     regExtractorCard.setAttribute("isShortened", "true");                    
                     cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
                 }
-		}); 
+            }); 
         } else {
             cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
             // regExtractorCard.innerHTML = contentString;
         }
+        return regExtractorCard;
+    }
+
+    extractToQACard(extract: ParsedExtract, frontIndex:number, backIndex:number): Element | null {
+
+        const regExtractorCard = document.createElement("div");
+        regExtractorCard.addClass('regExtractorQACard');
+        regExtractorCard.setAttribute("isShortened", "false");
+        regExtractorCard.setAttribute("cardSide", "front");
+
+        const extractTypeName = extract.getName();
+        const frontContentString = extract.matches[frontIndex];
+        const backContentString = extract.matches[backIndex];
+
+        const extractTypeNameTag = regExtractorCard.createEl("div", "extractTypeNameTag");
+        extractTypeNameTag.addClass("extractTypeNameTag");
+        extractTypeNameTag.textContent = extractTypeName;
+
+        const cardMarkdownText = regExtractorCard.createEl("div", "cardMarkdownText");
+        cardMarkdownText.addClass("cardMarkdownText");
+
+        cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, '', this.plugin)});
+        
+        // Toggle between front and back
+        regExtractorCard.addEventListener("click", (event: MouseEvent) => {
+            console.log('QA Card clicked');
+            cardMarkdownText.innerHTML = '';
+            if (regExtractorCard.getAttribute("cardSide") == "front") {
+                regExtractorCard.setAttribute("cardSide", "back");
+                cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, backContentString, el, '', this.plugin)});
+            } else {
+                regExtractorCard.setAttribute("cardSide", "front");                    
+                cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, '', this.plugin)});
+            }
+        }); 
         return regExtractorCard;
     }
 
