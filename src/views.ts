@@ -161,11 +161,11 @@ export class RegexExtractorView extends ItemView {
             return;
         }
         const selectedPillsElements = document.querySelectorAll('.fieldElement.selectedPill');
-        const selectedFieldNames = Array.from(selectedPillsElements).map(element => element.getAttribute("fieldname")?.toLowerCase());
+        const selectedFieldNames = Array.from(selectedPillsElements).map(element => element.getAttribute("fieldname"));
         const elements = document.querySelectorAll('.regExtractorCard');
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
-                if (selectedFieldNames.length == 0 || selectedFieldNames.includes(element.getAttribute("extractlabel")?.toLowerCase())) {
+                if (selectedFieldNames.length == 0 || selectedFieldNames.includes(element.getAttribute("extractlabel"))) {
                     element.style.display = 'grid';
                 } else {
                     element.style.display = 'none';
@@ -242,11 +242,11 @@ export class RegexExtractorView extends ItemView {
                     let card: Element | null;
                     if (type.type == 'Q&A') {
                         card = this.extractToQACard(fieldmatch, 2, 4);
-                        card?.setAttribute("regexType", type.type.toLowerCase());
+                        card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
                     }
                     else {
                         card = this.extractToRegularCard(fieldmatch);
-                        card?.setAttribute("regexType", type.type.toLowerCase());
+                        card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
                     }
                     if (card) {
                         parentElement.appendChild(card);
@@ -274,9 +274,10 @@ export class RegexExtractorView extends ItemView {
         regExtractorCard.addClass('regExtractorCard');
         regExtractorCard.setAttribute("cardType", "regular");
         regExtractorCard.setAttribute("isShortened", "false");
-        regExtractorCard.setAttribute("extractlabel", extract.getName().toLowerCase());
+        regExtractorCard.setAttribute("extractlabel", ParsedExtract.normalizeString(extract.getName()));
+        
 
-        const extractTypeName = extract.getName();
+        const extractTypeName = ParsedExtract.normalizeString(extract.getName());
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
         const contentIsLong: boolean = contentString.length >= 50;
 
@@ -320,7 +321,7 @@ export class RegexExtractorView extends ItemView {
         regExtractorCard.setAttribute("cardType", "qa");
         regExtractorCard.setAttribute("cardSide", "front");
 
-        const extractTypeName = extract.getName();
+        const extractTypeName = ParsedExtract.normalizeString(extract.getName());
         const frontContentString = extract.matches[frontIndex];
         const backContentString = extract.matches[backIndex];
 
@@ -364,9 +365,10 @@ export class RegexExtractorView extends ItemView {
 
     extractToTableLine(extract: ParsedExtract, filter?: string): Element | null {
         if (filter) {
-            const filterLowerCase = filter.toLowerCase();
+            const filterLowerCase = ParsedExtract.normalizeString(filter);
             if (!getRegexTypeNames().includes(filterLowerCase)) {
-                if (!extract.matches[extract.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
+                const titleString = ParsedExtract.normalizeString(extract.matches[extract.regExType.titleGroupIndex]);
+                if (!titleString.includes(filterLowerCase)) {
                     return null;
                 }
             }

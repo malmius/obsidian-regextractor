@@ -28,7 +28,7 @@ export class Parser {
         fieldsArray.forEach((regexExtract) => {
             const fieldName = regexExtract.getName().toLocaleLowerCase();
             if (!distinctFieldNames.includes(fieldName)) {
-                    distinctFieldNames.push(fieldName);
+                    distinctFieldNames.push(ParsedExtract.normalizeString(fieldName));
                 }
         })
         return distinctFieldNames;
@@ -108,4 +108,8 @@ export class ParsedExtract {
             return this.matches[this.regExType.titleGroupIndex];
         }
     }
+
+    static normalizeString(str:string): string {
+        return str.replace(/^[^a-zA-Z0-9[#]+|[^a-zA-Z0-9\]]+$/g, '').toLowerCase();
+      }
 }
