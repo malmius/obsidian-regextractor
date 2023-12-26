@@ -99,6 +99,21 @@ export class RegexExtractorView extends ItemView {
             fieldTypeOption.text = regexTypeName;
         })
 
+        fieldTypeDropDown.addEventListener('change', () => {
+            const selectedValue = fieldTypeDropDown.value;
+            const elements = document.querySelectorAll('.regExtractorCard');
+            elements.forEach(function(element) {
+                console.log(element.getAttribute('regextype'));
+                if (element instanceof HTMLElement) {
+                    if (element.getAttribute('regextype') == selectedValue) {
+                        element.style.display = 'grid';
+                    } else {
+                        element.style.display = 'none';
+                    }
+                }
+            })
+        });        
+
         const parsedFieldsContainer = document.createElement('div');
         parsedFieldsContainer.id = 'parsedFieldsContainer'
         parsedFieldsContainer.classList.add('parsedFieldsContainer');
@@ -179,9 +194,11 @@ export class RegexExtractorView extends ItemView {
                     let card: Element | null;
                     if (type.type == 'Q&A') {
                         card = this.extractToQACard(fieldmatch, 2, 4);
+                        card?.setAttribute("regexType", type.type.toLowerCase());
                     }
                     else {
                         card = this.extractToRegularCard(fieldmatch, filter);
+                        card?.setAttribute("regexType", type.type.toLowerCase());
                     }
                     if (card) {
                         parentElement.appendChild(card);
@@ -217,6 +234,7 @@ export class RegexExtractorView extends ItemView {
 
         const regExtractorCard = document.createElement("div");
         regExtractorCard.addClass('regExtractorCard');
+        regExtractorCard.setAttribute("cardType", "regular");
         regExtractorCard.setAttribute("isShortened", "false");
 
         const extractTypeName = extract.getName();
@@ -257,8 +275,9 @@ export class RegexExtractorView extends ItemView {
     extractToQACard(extract: ParsedExtract, frontIndex:number, backIndex:number): Element | null {
 
         const regExtractorCard = document.createElement("div");
-        regExtractorCard.addClass('regExtractorQACard');
+        regExtractorCard.addClass('regExtractorCard');
         regExtractorCard.setAttribute("isShortened", "false");
+        regExtractorCard.setAttribute("cardType", "qa");
         regExtractorCard.setAttribute("cardSide", "front");
 
         const extractTypeName = extract.getName();
