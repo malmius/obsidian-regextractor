@@ -47,7 +47,7 @@ If your plugin does not need CSS, delete this file.
 .cardMarkdownText {
     font-size: 0.8rem;
     grid-area: content;
-    padding: 0.5em;
+    padding: 0.5em 0.5em 0.5em 1em;
 }
 
 .nav-action-button {
@@ -64,6 +64,10 @@ If your plugin does not need CSS, delete this file.
     background-color: var(--color-accent-1);
 }
 
-.regExtractorCard:not([cardtype="regular"]) {
+.regExtractorCard:not([cardtype="regular"])[cardside="front"] {
     border-right: solid 8px var(--color-accent-1);
+}
+
+.regExtractorCard:not([cardtype="regular"])[cardside="back"] {
+    border-left: solid 8px var(--color-accent-1);
 }

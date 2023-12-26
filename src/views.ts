@@ -336,12 +336,15 @@ export class RegexExtractorView extends ItemView {
         
         // Toggle between front and back
         regExtractorCard.addEventListener("click", (event: MouseEvent) => {
-            console.log('QA Card clicked');
             cardMarkdownText.innerHTML = '';
             if (regExtractorCard.getAttribute("cardSide") == "front") {
+                const label = ParsedExtract.normalizeString(extract.getMatchByGroupname('BackLabel'))
+                regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = label;
                 regExtractorCard.setAttribute("cardSide", "back");
                 cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, backContentString, el, '', this.plugin)});
             } else {
+                const label = ParsedExtract.normalizeString(extract.getMatchByGroupname('FrontLabel'))
+                regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = label;
                 regExtractorCard.setAttribute("cardSide", "front");                    
                 cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, '', this.plugin)});
             }

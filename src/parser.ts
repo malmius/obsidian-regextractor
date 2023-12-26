@@ -13,12 +13,12 @@ export class Parser {
 
     async parseFields(regexType: RegexType): Promise<ParsedExtract[]> {
         let parsedExtracts: Promise<ParsedExtract[]>;
-        if (regexType.type == 'Q&A') {
-            const activeFile = await this.getContentOfActiveFile();
-            parsedExtracts = this.returnFieldMatchesByFile(regexType, activeFile);
-        } else {
+        if (regexType.matchByLine) {
             const fileLines = await this.getLinesOfActiveFile();
             parsedExtracts = this.returnFieldMatchesByLine(regexType, fileLines);
+        } else {
+            const activeFile = await this.getContentOfActiveFile();
+            parsedExtracts = this.returnFieldMatchesByFile(regexType, activeFile);
         }
         return parsedExtracts;
     }
@@ -112,4 +112,8 @@ export class ParsedExtract {
     static normalizeString(str:string): string {
         return str.replace(/^[^a-zA-Z0-9[#]+|[^a-zA-Z0-9\]]+$/g, '').toLowerCase();
       }
+
+    getMatchByGroupname(groupname:string) {
+        return this.matches[this.regExType.regExGroups.indexOf(groupname)];
+    }
 }
