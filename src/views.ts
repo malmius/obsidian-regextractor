@@ -30,11 +30,6 @@ export class RegexExtractorView extends ItemView {
 
         console.log(this.getViewType());
 
-        // Markdown Rendering Test
-        // const testString = 'das ist ein **fetter Text** und ein #tag und ein [[Link]]';
-        // this.contentEl.createDiv(("markdown-element"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, testString, el, '', this.plugin)});
-        
-
         // Load Basic View Elements (Buttons, Divs)
         this.loadViewStructure(this.contentEl);
         // Load Specific View Element
@@ -56,11 +51,18 @@ export class RegexExtractorView extends ItemView {
             // this.drawParsedContentTable(contentContainer);
             // this.drawParsedContentCard(contentContainer);
         }
+
+        // Set Defaults
         const fieldTypeDropDown = document.getElementById("fieldTypeDropDown");
         if (fieldTypeDropDown) {
             fieldTypeDropDown.value = 'all';
-            this.filterForType(fieldTypeDropDown);
         }
+
+        // Keine ausgewählten Pills
+        const fieldElement = document.querySelectorAll('.fieldElement');
+        fieldElement.forEach(element => {
+            element.removeClass('selectedPill');
+        });
 
     }
 
@@ -110,7 +112,7 @@ export class RegexExtractorView extends ItemView {
             fieldTypeOption.text = regexTypeName;
         })
 
-        fieldTypeDropDown.addEventListener('change', () => {this.filterForType(fieldTypeDropDown)
+        fieldTypeDropDown.addEventListener('change', () => {this.filterCardsByType(fieldTypeDropDown.value)
         });        
 
         const parsedFieldsContainer = document.createElement('div');
@@ -133,12 +135,17 @@ export class RegexExtractorView extends ItemView {
         })
     }
 
-    protected filterForType(selectElement:HTMLSelectElement) {
-        const selectedValue = selectElement.value;
+    protected filterCardsByType(selectedValue:string) {
         const elements = document.querySelectorAll('.regExtractorCard');
+        console.log('filter by type elements:');
+        console.log(elements);
         elements.forEach(function(element) {
-            console.log(element.getAttribute('regextype'));
             if (element instanceof HTMLElement) {
+                // 'all' ist ausgewählt
+                if (selectedValue == 'all') {
+                    element.style.display = 'grid';
+                    return;
+                }
                 if (element.getAttribute('regextype') == selectedValue) {
                     element.style.display = 'grid';
                 } else {
@@ -166,13 +173,13 @@ export class RegexExtractorView extends ItemView {
 
     }
 
-    protected async drawContent(parentElement: Element, layoutType: LAYOUT_TYPE, filter?: string) {
+    protected async drawContent(parentElement: Element, layoutType: LAYOUT_TYPE) {
         switch (layoutType) {
             case LAYOUT_TYPE.CARD:
-                this.drawParsedContentCard(parentElement, filter);
+                this.drawParsedContentCard(parentElement);
                 break;
             case LAYOUT_TYPE.TABLE:
-                this.drawParsedContentTable(parentElement, filter)
+                this.drawParsedContentTable(parentElement);
                 break;
             default:
                 break;
@@ -197,7 +204,7 @@ export class RegexExtractorView extends ItemView {
         });
     }
 
-    protected async drawParsedContentCard(parentElement: Element, filter?: string) {
+    protected async drawParsedContentCard(parentElement: Element) {
         parentElement.innerHTML = '';
         const regexTypes = Object.values(REGEX_TYPES);
 
@@ -211,7 +218,7 @@ export class RegexExtractorView extends ItemView {
                         card?.setAttribute("regexType", type.type.toLowerCase());
                     }
                     else {
-                        card = this.extractToRegularCard(fieldmatch, filter);
+                        card = this.extractToRegularCard(fieldmatch);
                         card?.setAttribute("regexType", type.type.toLowerCase());
                     }
                     if (card) {
@@ -227,29 +234,23 @@ export class RegexExtractorView extends ItemView {
         fieldElement.innerHTML = fieldname;
 
         fieldElement.addEventListener('click', () => {
+            fieldElement.classList.toggle('selectedPill');
             const contentContainer = document.getElementById('parsedContentContainer');
             if (contentContainer) {
-                this.drawContent(contentContainer, this.currentLayout, fieldname);
+                this.drawContent(contentContainer, this.currentLayout);
             }
         })
 
         return fieldElement;
     }
 
-    extractToRegularCard(extract: ParsedExtract, filter?: string): Element | null {
-        if (filter) {
-            const filterLowerCase = filter.toLowerCase();
-            if (!getRegexTypeNames().includes(filterLowerCase)) {
-                if (!extract.matches[extract.regExType.titleGroupIndex]?.toLowerCase().includes(filterLowerCase)) {
-                    return null;
-                }
-            }
-        }
 
+    extractToRegularCard(extract: ParsedExtract): Element | null {
         const regExtractorCard = document.createElement("div");
         regExtractorCard.addClass('regExtractorCard');
         regExtractorCard.setAttribute("cardType", "regular");
         regExtractorCard.setAttribute("isShortened", "false");
+        regExtractorCard.setAttribute("extractlabel", extract.getName().toLowerCase());
 
         const extractTypeName = extract.getName();
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
@@ -323,7 +324,6 @@ export class RegexExtractorView extends ItemView {
     }
 
     extractToTableLine(extract: ParsedExtract, filter?: string): Element | null {
-        // console.log('tablefilter: ' + filter);
         if (filter) {
             const filterLowerCase = filter.toLowerCase();
             if (!getRegexTypeNames().includes(filterLowerCase)) {

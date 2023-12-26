@@ -58,3 +58,7 @@ If your plugin does not need CSS, delete this file.
 .regExtractorCard["cardtype"="qa"]:hover {
     /* transform: rotateY(180deg); */
 }
+
+.selectedPill {
+    background-color: red;
+}

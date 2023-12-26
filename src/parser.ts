@@ -12,7 +12,6 @@ export class Parser {
 	}
 
     async parseFields(regexType: RegexType): Promise<ParsedExtract[]> {
-        console.log('parse fields for: ' + regexType.type);
         let parsedExtracts: Promise<ParsedExtract[]>;
         if (regexType.type == 'Q&A') {
             const activeFile = await this.getContentOfActiveFile();
@@ -60,7 +59,7 @@ export class Parser {
         const matches = fileContent.matchAll(regExpression);
         if (matches) {
             for (const match of matches) {
-                console.log("match: " + match);
+                // console.log("match: " + match);
                 const newExtract = new ParsedExtract(0, regexType, match);
                 extracts.push(newExtract);
             }
