@@ -183,14 +183,19 @@ export class RegexExtractorView extends ItemView {
             const parser = new Parser(this.plugin);
             const fieldsMatches = await parser.parseFields(type);
             const distinctFieldnames = parser.getDistinctFieldNames(fieldsMatches);
+            let distinctFieldnamesAfterSettings:string[] = distinctFieldnames;
 
-            const settingsIgnoreFields = this.plugin.settings.ignoreFieldsList.split(',');
-            const distinctFieldnamesAfterSettings = distinctFieldnames.filter(fieldName => !settingsIgnoreFields.includes(fieldName));
-    
-            distinctFieldnamesAfterSettings.forEach((fieldname: string) => {
-                const fieldPill = this.makePill(fieldname);
-                parentElement.appendChild(fieldPill);
-            })
+            try {
+                const settingsIgnoreFields = this.plugin.settings.ignoreFieldsList.split(',');
+                distinctFieldnamesAfterSettings = distinctFieldnames.filter(fieldName => !settingsIgnoreFields.includes(fieldName));
+            } catch (error) {
+                console.log('cant split settings string.');
+            } finally {
+                distinctFieldnamesAfterSettings.forEach((fieldname: string) => {
+                    const fieldPill = this.makePill(fieldname);
+                    parentElement.appendChild(fieldPill);
+                })
+            }
         })
 
     }
