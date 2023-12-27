@@ -49,7 +49,7 @@ export class RegexExtractorView extends ItemView {
         }
 
         // Set Defaults
-        const fieldTypeDropDown = document.getElementById("fieldTypeDropDown");
+        const fieldTypeDropDown:HTMLSelectElement = document.getElementById("fieldTypeDropDown");
         if (fieldTypeDropDown) {
             fieldTypeDropDown.value = 'all';
         }
@@ -126,15 +126,18 @@ export class RegexExtractorView extends ItemView {
 
     protected refreshParsedExtracts() {
         const parsedFieldsContainer = document.getElementById('parsedFieldsContainer');
-        if (fieldTypeDropDown.value == 'field') {
-            parsedFieldsContainer?.setAttribute("ishidden", "false");
-            parsedFieldsContainer.style.display = 'block';
-        } else {
-            parsedFieldsContainer?.setAttribute("ishidden", "true");
-            parsedFieldsContainer.style.display = 'none';
+        const fieldTypeDropDown = document.getElementById('fieldTypeDropDown');
+        if (fieldTypeDropDown instanceof HTMLSelectElement && parsedFieldsContainer instanceof HTMLElement) {
+            if (fieldTypeDropDown?.value == 'field') {
+                parsedFieldsContainer?.setAttribute("ishidden", "false");
+                parsedFieldsContainer.style.display = 'block';
+            } else {
+                parsedFieldsContainer?.setAttribute("ishidden", "true");
+                parsedFieldsContainer.style.display = 'none';
+            }
+            this.filterCardsByType(fieldTypeDropDown?.value);
+            this.filterCardsByLabel();
         }
-        this.filterCardsByType(fieldTypeDropDown.value);
-        this.filterCardsByLabel();
     }
 
 
