@@ -44,8 +44,6 @@ export class RegexExtractorView extends ItemView {
         }
         if (contentContainer) {
             this.drawContent(contentContainer, this.currentLayout);
-            // this.drawParsedContentTable(contentContainer);
-            // this.drawParsedContentCard(contentContainer);
         }
 
         // Set Defaults
@@ -67,16 +65,24 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected loadViewStructure(viewContent: Element) {
-        // add icon for refresh
+        // Add Container
         const navigationContainer = viewContent.createEl("div", "regextractor-container-nav");
+
+        const fieldsContainer = viewContent.createEl("div", "regextractor-container-labels");
+        fieldsContainer.id = 'regextractor-container-labels'
+
+        const contentContainer = viewContent.createEl('div', "regextractor-container-extracts")
+        contentContainer.id = 'regextractor-container-extracts'
+
+        // add icon for refresh
 		const navActionButtonRefresh = navigationContainer.createEl("div", "regextractor-nav-action-button");
 		setIcon(navActionButtonRefresh, "refresh-cw");
 		const navActionButtonShowAsCard = navigationContainer.createEl("div", "regextractor-nav-action-button");
 		setIcon(navActionButtonShowAsCard, "panel-top");
         const navActionButtonShowAsTable = navigationContainer.createEl("div", "regextractor-nav-action-button");
 		setIcon(navActionButtonShowAsTable, "table");
-        const fieldTypeDropDown = navigationContainer.createEl("select", "regextractor-nav-dropdown");
-        fieldTypeDropDown.id = "regextractor-nav-select-regextype";
+        const regexTypeSelect = navigationContainer.createEl("select", "regextractor-nav-dropdown");
+        regexTypeSelect.id = "regextractor-nav-select-regextype";
 
 		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
             this.reloadRegexExtractorViewDefault();
@@ -84,55 +90,47 @@ export class RegexExtractorView extends ItemView {
 
         navActionButtonShowAsCard.addEventListener("click", (event: MouseEvent) => {
             this.currentLayout = LAYOUT_TYPE.CARD;
-            const parsedContentContainer = document.getElementById('regextractor-container-extracts');
-            if (parsedContentContainer) {
-                this.drawContent(parsedContentContainer, this.currentLayout);
+            const containerExtracts = document.getElementById('regextractor-container-extracts');
+            if (containerExtracts) {
+                this.drawContent(containerExtracts, this.currentLayout);
             }
 		});
 
         navActionButtonShowAsTable.addEventListener("click", (event: MouseEvent) => {
             this.currentLayout = LAYOUT_TYPE.TABLE;
-            const parsedContentContainer = document.getElementById('regextractor-container-extracts');
-            if (parsedContentContainer) {
-                this.drawContent(parsedContentContainer, this.currentLayout);
+            const containerExtracts = document.getElementById('regextractor-container-extracts');
+            if (containerExtracts) {
+                this.drawContent(containerExtracts, this.currentLayout);
             }
 		});
 
         // Field Types
         const regexTypeNames: string[] = getRegexTypeNames();
-        const fieldTypeOption = fieldTypeDropDown.createEl("option");
+        const fieldTypeOption = regexTypeSelect.createEl("option");
         fieldTypeOption.value = 'all';
         fieldTypeOption.text = 'all';
         fieldTypeOption.setAttribute("selected", "selected");
         regexTypeNames.forEach((regexTypeName) => {
-            const fieldTypeOption = fieldTypeDropDown.createEl("option");
+            const fieldTypeOption = regexTypeSelect.createEl("option");
             fieldTypeOption.value = regexTypeName;
             fieldTypeOption.text = regexTypeName;
-        })        
+        })
 
-        const parsedFieldsContainer = viewContent.createEl('div');
-        parsedFieldsContainer.id = 'regextractor-container-labels'
-        parsedFieldsContainer.classList.add('regextractor-container-labels');
-
-        const parsedContentContainer = viewContent.createEl('div')
-        parsedContentContainer.id = 'regextractor-container-extracts'
-        parsedContentContainer.classList.add('regextractor-container-extracts');
-
-        fieldTypeDropDown.addEventListener('change', () => {
+        regexTypeSelect.addEventListener('change', () => {
             this.refreshParsedExtracts();
         });
     }
 
     protected refreshParsedExtracts() {
-        const parsedFieldsContainer = document.getElementById('regextractor-container-labels');
+        const fieldsContainer = document.getElementById('regextractor-container-labels');
         const fieldTypeDropDown = document.getElementById('regextractor-nav-select-regextype');
-        if (fieldTypeDropDown instanceof HTMLSelectElement && parsedFieldsContainer instanceof HTMLElement) {
+        if (fieldsContainer instanceof HTMLElement && fieldTypeDropDown instanceof HTMLSelectElement) {
             if (fieldTypeDropDown?.value == 'field') {
-                parsedFieldsContainer?.setAttribute("ishidden", "false");
-                parsedFieldsContainer.style.display = 'block';
+                fieldsContainer?.setAttribute("ishidden", "false");
+                fieldsContainer.style.display = 'block';
             } else {
-                parsedFieldsContainer?.setAttribute("ishidden", "true");
-                parsedFieldsContainer.style.display = 'none';
+                fieldsContainer?.setAttribute("ishidden", "true");
+                fieldsContainer.style.display = 'none';
             }
             this.filterCardsByType(fieldTypeDropDown?.value);
             this.filterCardsByLabel();
