@@ -292,16 +292,28 @@ export class RegexExtractorView extends ItemView {
             const truncatedContentString = contentString.substring(0, 180) + "...";
 
             regExtractorCard.setAttribute("isShortened", "true");
-            cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, '', this.plugin)});
+            cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, truncatedContentString, el, this.plugin.app.workspace.getActiveFile().path, this.plugin)});
 
             // Toggle between shortened and long version
             regExtractorCard.addEventListener("click", (event: MouseEvent) => {
                 this.toggleShortLong(regExtractorCard, contentString, truncatedContentString);
             }); 
         } else {
-            cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, '', this.plugin)});
+            cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, this.plugin.app.workspace.getActiveFile().path, this.plugin)});
             // regExtractorCard.innerHTML = contentString;
         }
+
+        const linksInCard = regExtractorCard.querySelectorAll('.markdown-text a.internal-link');
+        if (linksInCard) {
+            linksInCard.forEach(link => {
+                link.addEventListener("click", (event:MouseEvent) => {
+                    const linkName = link.getAttribute("data-href");
+                    const linkedFile = this.plugin.app.metadataCache.getFirstLinkpathDest(linkName, this.plugin.app.workspace.getActiveFile().path);
+                    this.plugin.app.workspace.getLeaf().openFile(linkedFile);
+                })
+            })
+        }
+
         return regExtractorCard;
     }
 
@@ -339,7 +351,7 @@ export class RegexExtractorView extends ItemView {
         const cardMarkdownText = regExtractorCard.createEl("div", "cardMarkdownText");
         cardMarkdownText.addClass("cardMarkdownText");
 
-        cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, '', this.plugin)});
+        cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, this.plugin.app.workspace.getActiveFile().path, this.plugin)});
         
         // Toggle between front and back
         regExtractorCard.addEventListener("click", (event: MouseEvent) => {
@@ -347,11 +359,11 @@ export class RegexExtractorView extends ItemView {
             if (regExtractorCard.getAttribute("cardSide") == "front") {
                 regExtractorCard.setAttribute("cardSide", "back");
                 regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = backLabelString;
-                cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, backContentString, el, '', this.plugin)});
+                cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, backContentString, el, this.plugin.app.workspace.getActiveFile().path, this.plugin)});
             } else {
                 regExtractorCard.setAttribute("cardSide", "front");                    
                 regExtractorCard.querySelector('.extractTypeNameTag').innerHTML = frontLabelString;
-                cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, '', this.plugin)});
+                cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, this.plugin.app.workspace.getActiveFile().path, this.plugin)});
             }
         }); 
         return regExtractorCard;
@@ -363,10 +375,10 @@ export class RegexExtractorView extends ItemView {
             element.innerHTML = '';
             if (cardToToggle.getAttribute("isShortened") == "true") {
                 cardToToggle.setAttribute("isShortened", "false");
-                element.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, textLong, el, '', this.plugin)});
+                element.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, textLong, el, this.plugin.app.workspace.getActiveFile().path, this.plugin)});
             } else {
                 cardToToggle.setAttribute("isShortened", "true");                    
-                element.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, textShort, el, '', this.plugin)});
+                element.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, textShort, el, this.plugin.app.workspace.getActiveFile().path, this.plugin)});
             }
         });
     }
