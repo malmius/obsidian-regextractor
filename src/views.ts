@@ -37,8 +37,8 @@ export class RegexExtractorView extends ItemView {
     }
 
     reloadRegexExtractorViewDefault() {
-        const fieldsContainer = document.getElementById('parsedFieldsContainer');
-        const contentContainer = document.getElementById('parsedContentContainer');
+        const fieldsContainer = document.getElementById('regextractor-container-labels');
+        const contentContainer = document.getElementById('regextractor-container-extracts');
         if (fieldsContainer) {
             this.drawFields(fieldsContainer); 
         }
@@ -49,7 +49,7 @@ export class RegexExtractorView extends ItemView {
         }
 
         // Set Defaults
-        const fieldTypeDropDown = document.getElementById("fieldTypeDropDown");
+        const fieldTypeDropDown = document.getElementById("regextractor-nav-select-regextype");
         if (fieldTypeDropDown instanceof HTMLSelectElement) {
             fieldTypeDropDown.value = 'all';
         }
@@ -68,14 +68,15 @@ export class RegexExtractorView extends ItemView {
 
     protected loadViewStructure(viewContent: Element) {
         // add icon for refresh
-		const navActionButtonRefresh = viewContent.createEl("div", "nav-action-button");
+        const navigationContainer = viewContent.createEl("div", "regextractor-container-nav");
+		const navActionButtonRefresh = navigationContainer.createEl("div", "regextractor-nav-action-button");
 		setIcon(navActionButtonRefresh, "refresh-cw");
-		const navActionButtonShowAsCard = viewContent.createEl("div", "nav-action-button");
+		const navActionButtonShowAsCard = navigationContainer.createEl("div", "regextractor-nav-action-button");
 		setIcon(navActionButtonShowAsCard, "panel-top");
-        const navActionButtonShowAsTable = viewContent.createEl("div", "nav-action-button");
+        const navActionButtonShowAsTable = navigationContainer.createEl("div", "regextractor-nav-action-button");
 		setIcon(navActionButtonShowAsTable, "table");
-        const fieldTypeDropDown = viewContent.createEl("select", "fieldTypeDropDown");
-        fieldTypeDropDown.id = "fieldTypeDropDown";
+        const fieldTypeDropDown = navigationContainer.createEl("select", "regextractor-nav-dropdown");
+        fieldTypeDropDown.id = "regextractor-nav-select-regextype";
 
 		navActionButtonRefresh.addEventListener("click", (event: MouseEvent) => {
             this.reloadRegexExtractorViewDefault();
@@ -83,7 +84,7 @@ export class RegexExtractorView extends ItemView {
 
         navActionButtonShowAsCard.addEventListener("click", (event: MouseEvent) => {
             this.currentLayout = LAYOUT_TYPE.CARD;
-            const parsedContentContainer = document.getElementById('parsedContentContainer');
+            const parsedContentContainer = document.getElementById('regextractor-container-extracts');
             if (parsedContentContainer) {
                 this.drawContent(parsedContentContainer, this.currentLayout);
             }
@@ -91,7 +92,7 @@ export class RegexExtractorView extends ItemView {
 
         navActionButtonShowAsTable.addEventListener("click", (event: MouseEvent) => {
             this.currentLayout = LAYOUT_TYPE.TABLE;
-            const parsedContentContainer = document.getElementById('parsedContentContainer');
+            const parsedContentContainer = document.getElementById('regextractor-container-extracts');
             if (parsedContentContainer) {
                 this.drawContent(parsedContentContainer, this.currentLayout);
             }
@@ -109,15 +110,13 @@ export class RegexExtractorView extends ItemView {
             fieldTypeOption.text = regexTypeName;
         })        
 
-        const parsedFieldsContainer = document.createElement('div');
-        parsedFieldsContainer.id = 'parsedFieldsContainer'
-        parsedFieldsContainer.classList.add('parsedFieldsContainer');
-        viewContent.appendChild(parsedFieldsContainer);
+        const parsedFieldsContainer = viewContent.createEl('div');
+        parsedFieldsContainer.id = 'regextractor-container-labels'
+        parsedFieldsContainer.classList.add('regextractor-container-labels');
 
-        const parsedContentContainer = document.createElement('div')
-        parsedContentContainer.id = 'parsedContentContainer'
-        parsedContentContainer.classList.add('parsedContentContainer');
-        viewContent.appendChild(parsedContentContainer);
+        const parsedContentContainer = viewContent.createEl('div')
+        parsedContentContainer.id = 'regextractor-container-extracts'
+        parsedContentContainer.classList.add('regextractor-container-extracts');
 
         fieldTypeDropDown.addEventListener('change', () => {
             this.refreshParsedExtracts();
@@ -125,8 +124,8 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected refreshParsedExtracts() {
-        const parsedFieldsContainer = document.getElementById('parsedFieldsContainer');
-        const fieldTypeDropDown = document.getElementById('fieldTypeDropDown');
+        const parsedFieldsContainer = document.getElementById('regextractor-container-labels');
+        const fieldTypeDropDown = document.getElementById('regextractor-nav-select-regextype');
         if (fieldTypeDropDown instanceof HTMLSelectElement && parsedFieldsContainer instanceof HTMLElement) {
             if (fieldTypeDropDown?.value == 'field') {
                 parsedFieldsContainer?.setAttribute("ishidden", "false");
@@ -160,7 +159,7 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected filterCardsByLabel() {
-        if (document.getElementById('parsedFieldsContainer')?.getAttribute("ishidden") == "true") {
+        if (document.getElementById('regextractor-container-labels')?.getAttribute("ishidden") == "true") {
             return;
         }
         const selectedPillsElements = document.querySelectorAll('.fieldElement.selectedPill');

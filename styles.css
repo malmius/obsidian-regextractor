@@ -7,6 +7,20 @@ If your plugin does not need CSS, delete this file.
 
 */
 
+/** NAVIGATION **/
+
+.regextractor-container-nav {
+    background-color: pink;
+    display: grid;
+}
+
+/** LABELS **/
+
+.regextractor-container-labels {
+    padding: 1em;
+    text-align: center;
+}
+
 .fieldElement {
     display: inline-block;
     background-color: var(--background-primary);
@@ -17,10 +31,9 @@ If your plugin does not need CSS, delete this file.
     font-size: 0.8rem;
 }
 
-.parsedFieldsContainer {
-    padding: 1em;
-    text-align: center;
-}
+/** EXTRACTS **/
+
+/* .regextractor-container-extracts {} */
 
 .regExtractorCard {
     background-color: var(--background-primary);
