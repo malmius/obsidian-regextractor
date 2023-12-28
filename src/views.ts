@@ -1,7 +1,7 @@
 import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
-import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
+import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames, REGEXTRACT_TYPE } from './constants';
 
 enum LAYOUT_TYPE {'TABLE', 'CARD'}
 
@@ -126,7 +126,9 @@ export class RegexExtractorView extends ItemView {
         const fieldTypeDropDown = document.getElementById('regextractor-nav-select-regextype');
         if (fieldsContainer instanceof HTMLElement && fieldTypeDropDown instanceof HTMLSelectElement) {
             const fieldTypeDropDownValue = fieldTypeDropDown?.value;
-
+            const regextractType = Object.values(REGEXTRACT_TYPE).filter(type => type.displayName === fieldTypeDropDownValue).map(type => type.hasLabel);
+            const regextractTypeHasLabel = Boolean(regextractType[0]);
+            console.log(regextractTypeHasLabel);
             if (fieldTypeDropDown?.value == 'field') {
                 fieldsContainer?.setAttribute("ishidden", "false");
                 fieldsContainer.style.display = 'block';

@@ -3,12 +3,12 @@ export const VIEW_TYPES = {
 }
 
 export const REGEXTRACT_TYPE = {
-  FIELD: {name: 'FIELD', hasLabel: true},
-  HIGHLIGHT: {name: 'HIGHLIGHT', hasLabel: false},
-  QA: {name: 'Q&A', hasLabel: false},
-  COMMENT: {name: 'COMMENT', hasLabel: false},
-  CALLOUT: {name: 'CALLOUT', hasLabel: true},
-  KEYVALUE: {name: 'KEY&VALUE', hasLabel: true}
+  FIELD: {name: 'FIELD', displayName: 'dataview fields', hasLabel: true},
+  HIGHLIGHT: {name: 'HIGHLIGHT', displayName: 'highlighted text', hasLabel: false},
+  QA: {name: 'Q&A', displayName: 'question & answers', hasLabel: false},
+  COMMENT: {name: 'COMMENT', displayName: 'comments', hasLabel: false},
+  CALLOUT: {name: 'CALLOUT', displayName: 'callouts', hasLabel: true},
+  KEYVALUE: {name: 'KEY&VALUE', displayName: 'key value pairs', hasLabel: true}
 }
 
 export enum REGEXTRACT_RENDER_TYPE {
@@ -150,7 +150,8 @@ export function getRegexTypeNames(): string[] {
      * The new Set() constructor then removes duplicate values.
      * The spread syntax ([...set]) is used to convert the set back to an array.
      */
-    return [...new Set(Object.values(REGEX_TYPES).map(regexType => regexType.type.toLowerCase()))];
+    // return [...new Set(Object.values(REGEX_TYPES).map(regexType => regexType.type.toLowerCase()))];
+    return [...new Set(Object.values(REGEXTRACT_TYPE).map(regextractType => regextractType.displayName))];
 }
 
 export function getFilterableRegexTypes(): RegexType[] {
