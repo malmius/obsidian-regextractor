@@ -1,7 +1,7 @@
 import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
-import { REGEX_TYPES, RENDERTYPE, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
+import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames } from './constants';
 
 enum LAYOUT_TYPE {'TABLE', 'CARD'}
 
@@ -125,6 +125,8 @@ export class RegexExtractorView extends ItemView {
         const fieldsContainer = document.getElementById('regextractor-container-labels');
         const fieldTypeDropDown = document.getElementById('regextractor-nav-select-regextype');
         if (fieldsContainer instanceof HTMLElement && fieldTypeDropDown instanceof HTMLSelectElement) {
+            const fieldTypeDropDownValue = fieldTypeDropDown?.value;
+
             if (fieldTypeDropDown?.value == 'field') {
                 fieldsContainer?.setAttribute("ishidden", "false");
                 fieldsContainer.style.display = 'block';
@@ -240,11 +242,11 @@ export class RegexExtractorView extends ItemView {
             const fieldsMatches = await parser.parseFields(type);
                 fieldsMatches.forEach((fieldmatch) => {
                     let card: Element | null;
-                    if (type.renderType == RENDERTYPE.FRONT_BACK) {
+                    if (type.renderType == REGEXTRACT_RENDER_TYPE.FRONT_BACK) {
                         card = this.extractToFrontBackCard(fieldmatch);
                         card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
                     }
-                    else if (type.renderType == RENDERTYPE.REGULAR) {
+                    else if (type.renderType == REGEXTRACT_RENDER_TYPE.REGULAR) {
                         card = this.extractToRegularCard(fieldmatch);
                         card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
                     }

@@ -2,11 +2,19 @@ export const VIEW_TYPES = {
     'DEFAULT_VIEW': 'DEFAULT_VIEW'
 }
 
-export enum RENDERTYPE {
+export const REGEXTRACT_TYPE = {
+  FIELD: {name: 'FIELD', hasLabel: true},
+  HIGHLIGHT: {name: 'HIGHLIGHT', hasLabel: false},
+  QA: {name: 'Q&A', hasLabel: false},
+  COMMENT: {name: 'COMMENT', hasLabel: false},
+  CALLOUT: {name: 'CALLOUT', hasLabel: true},
+  KEYVALUE: {name: 'KEY&VALUE', hasLabel: true}
+}
+
+export enum REGEXTRACT_RENDER_TYPE {
   "REGULAR",
   "FRONT_BACK"
 }
-
 export class RegexType {
     regEx: string;
     type: string;
@@ -16,7 +24,7 @@ export class RegexType {
     titleGroupIndex: number;
     contentGroupIndex: number;
     matchByLine: boolean;
-    renderType: RENDERTYPE;
+    renderType: REGEXTRACT_RENDER_TYPE;
 
     constructor(regEx: string
       , type: string
@@ -26,7 +34,7 @@ export class RegexType {
       , titleGroupIndex: number
       , contentGroupIndex: number
       , matchByLine: boolean
-      , renderType: RENDERTYPE) {
+      , renderType: REGEXTRACT_RENDER_TYPE) {
       this.regEx = regEx;
       this.type = type;
       this.hasTitle = hasTitle;
@@ -46,92 +54,92 @@ export class RegexType {
 export const REGEX_TYPES = {
     'FIELD_ROUNDBRACKETS': new RegexType(
       '\\((\\w+)::(.*?)\\)',
-      'FIELD',
+      REGEXTRACT_TYPE.FIELD.name,
       true,
       true,
       ['total', 'fieldname', 'fieldcontent'],
       1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
       2,
       true,
-      RENDERTYPE.REGULAR
+      REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'FIELD_SQUAREBRACKETS': new RegexType(
         // '\\[(\\w+)::(.*?)\\]',
         '\\[(\\w+)::\\s+((?:\\[{2})?[^\\]]*(?:\\]{2})?)\\]', // berücksichtigt auch Links
-        'FIELD',
+        REGEXTRACT_TYPE.FIELD.name,
         true,
         true,
         ['total', 'fieldname', 'fieldcontent'],
         1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
         2,
         true,
-        RENDERTYPE.REGULAR
+        REGEXTRACT_RENDER_TYPE.REGULAR
       ),
       'FIELD_NOBRACKETS': new RegexType(
         '^([^(\\[]*)::(.*)',
-        'FIELD',
+        REGEXTRACT_TYPE.FIELD.name,
         true,
         true,
         ['total', 'fieldname', 'fieldcontent'],
         1, // das zweite Element, d.h. bei Index 1 beinhaltet den Namen des Feldes
         2,
         true,
-        RENDERTYPE.REGULAR
+        REGEXTRACT_RENDER_TYPE.REGULAR
       ),
     'HIGHLIGHT': new RegexType(
         '==(.*?)==',
-        'HIGHLIGHT',
+        REGEXTRACT_TYPE.HIGHLIGHT.name,
         false,
         false,
         ['total', 'content'],
         -1, // Kein Name
         1,
         true,
-        RENDERTYPE.REGULAR
+        REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'Q&A': new RegexType(
         '^(#Q)[ ]*[:]{0,2}[ ]*((?:.+\n)*)\n*(#A)[ ]*[:]{0,2}[ ]*(.+(?:\n(?:^.{1,3}$|^.{4}(?<!<!--).*))*)',
-        'Q&A',
+        REGEXTRACT_TYPE.QA.name,
         false,
         false,
         ['total', 'FrontLabel', 'FrontContent', 'BackLabel', 'BackContent'],
         1, // Kein Name
         2,
         false,
-        RENDERTYPE.FRONT_BACK
+        REGEXTRACT_RENDER_TYPE.FRONT_BACK
     ),
     'MD_COMMENTS': new RegexType(
       '%%(.*?)%%',
-      'COMMENT',
+      REGEXTRACT_TYPE.COMMENT.name,
       false,
       false,
       ['total', 'content'],
       -1, // Kein Name
       1,
       true,
-      RENDERTYPE.REGULAR
+      REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'OBSIDIAN_CALLOUTS': new RegexType(
       '^>\\s+\\[!(.*)\\]\\s?(.*)\n^>\\s+(.*)',
-      'CALLOUT',
+      REGEXTRACT_TYPE.CALLOUT.name,
       false,
       true,
       ['total', 'calloutname', 'callouttitle', 'calloutcontent'],
       1,
       3,
       false,
-      RENDERTYPE.REGULAR
+      REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'SYNONYMS': new RegexType(
-      '^#Synonym(?:::)?\\s+(.*)\\s(?:=|:::)\\s(.*)',
-      'SYNONYM',
+      '^#(Synonym)(?:::)?\\s+(.*)\\s(?:=|:::)\\s(.*)',
+      REGEXTRACT_TYPE.KEYVALUE.name,
       false,
       false,
-      ['total', 'FrontContent', 'BackContent'],
-      -1, // Kein Name
+      ['total', 'Label', 'FrontContent', 'BackContent'],
+      1, // Kein Name
       3,
       true,
-      RENDERTYPE.FRONT_BACK
+      REGEXTRACT_RENDER_TYPE.FRONT_BACK
     )
   };
 
