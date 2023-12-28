@@ -158,4 +158,19 @@ export function getFilterableRegexTypes(): RegexType[] {
     return Object.values(REGEX_TYPES).filter(regexType => regexType.hasTitle == true);
 }
 
+export function getTypeFromDisplayName(displayName: string): string | null {
+  const objectKeys = Object.keys(REGEXTRACT_TYPE)
+  for (let i = 0; i < objectKeys.length; i++) {
+    const key = objectKeys[i];
+    if (REGEXTRACT_TYPE[key].displayName === displayName) {
+      return key;
+    }
+  }
+}
 
+export function getHasLabelsFromDisplayName(displayName: string): boolean {
+  const displayNameArray =  Object.values(REGEXTRACT_TYPE)
+  .filter(type => type.displayName === displayName)
+  .map(type => type.hasLabel);
+  return Boolean(displayNameArray[0]); // Array hat nur ein Element
+}
