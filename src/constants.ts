@@ -5,10 +5,10 @@ export const VIEW_TYPES = {
 export const REGEXTRACT_TYPE = {
   FIELD: {name: 'FIELD', displayName: 'dataview fields', hasLabel: true},
   HIGHLIGHT: {name: 'HIGHLIGHT', displayName: 'highlighted text', hasLabel: false},
-  QA: {name: 'Q&A', displayName: 'question & answers', hasLabel: false},
+  QA: {name: 'QA', displayName: 'question & answers', hasLabel: false},
   COMMENT: {name: 'COMMENT', displayName: 'comments', hasLabel: false},
   CALLOUT: {name: 'CALLOUT', displayName: 'callouts', hasLabel: true},
-  KEYVALUE: {name: 'KEY&VALUE', displayName: 'key value pairs', hasLabel: true}
+  KEYVALUE: {name: 'KEYVALUE', displayName: 'key value pairs', hasLabel: true}
 }
 
 export enum REGEXTRACT_RENDER_TYPE {
@@ -158,7 +158,7 @@ export function getFilterableRegexTypes(): RegexType[] {
     return Object.values(REGEX_TYPES).filter(regexType => regexType.hasTitle == true);
 }
 
-export function getTypeFromDisplayName(displayName: string): string | null {
+export function getTypeFromDisplayName(displayName: string): string {
   const objectKeys = Object.keys(REGEXTRACT_TYPE)
   for (let i = 0; i < objectKeys.length; i++) {
     const key = objectKeys[i];
@@ -166,6 +166,7 @@ export function getTypeFromDisplayName(displayName: string): string | null {
       return key;
     }
   }
+  return "";
 }
 
 export function getHasLabelsFromDisplayName(displayName: string): boolean {

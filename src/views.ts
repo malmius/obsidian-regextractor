@@ -142,16 +142,17 @@ export class RegexExtractorView extends ItemView {
     }
 
 
-    protected filterCardsByType(selectedValue:string) {
+    protected filterCardsByType(selectedType:string) {
         const elements = document.querySelectorAll('.regExtractorCard');
         elements.forEach(function(element) {
+            console.log('regextype of element: ' + element.getAttribute('regextype'));
             if (element instanceof HTMLElement) {
                 // 'all' ist ausgewählt
-                if (selectedValue == 'all') {
+                if (selectedType == 'all') {
                     element.style.display = 'grid';
                     return;
                 }
-                if (element.getAttribute('regextype') == selectedValue) {
+                if (element.getAttribute('regextype') == selectedType) {
                     element.style.display = 'grid';
                 } else {
                     element.style.display = 'none';
@@ -246,11 +247,11 @@ export class RegexExtractorView extends ItemView {
                     let card: Element | null;
                     if (type.renderType == REGEXTRACT_RENDER_TYPE.FRONT_BACK) {
                         card = this.extractToFrontBackCard(fieldmatch);
-                        card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
+                        card?.setAttribute("regextype", type.type);
                     }
                     else if (type.renderType == REGEXTRACT_RENDER_TYPE.REGULAR) {
                         card = this.extractToRegularCard(fieldmatch);
-                        card?.setAttribute("regexType", ParsedExtract.normalizeString(type.type));
+                        card?.setAttribute("regextype", type.type);
                     }
                     else {
                         card = null;
