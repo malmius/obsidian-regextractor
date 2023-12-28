@@ -15,6 +15,7 @@ export class RegexExtractorView extends ItemView {
 	constructor(leaf: WorkspaceLeaf, plugin: RegexExtractorPlugin) {
 		super(leaf);
 		this.plugin = plugin;
+        this.icon = 'scroll-text';
 	}
 
     getViewType(): string {
@@ -76,10 +77,13 @@ export class RegexExtractorView extends ItemView {
 
         // add icon for refresh
 		const navActionButtonRefresh = navigationContainer.createEl("div", "regextractor-nav-action-button");
+        navActionButtonRefresh.id = 'regextractor-nav-action-button-refresh';
 		setIcon(navActionButtonRefresh, "refresh-cw");
 		const navActionButtonShowAsCard = navigationContainer.createEl("div", "regextractor-nav-action-button");
+        navActionButtonShowAsCard.id = 'regextractor-nav-action-button-showascard';
 		setIcon(navActionButtonShowAsCard, "panel-top");
         const navActionButtonShowAsTable = navigationContainer.createEl("div", "regextractor-nav-action-button");
+        navActionButtonShowAsTable.id = 'regextractor-nav-action-button-showastable';
 		setIcon(navActionButtonShowAsTable, "table");
         const regexTypeSelect = navigationContainer.createEl("select", "regextractor-nav-dropdown");
         regexTypeSelect.id = "regextractor-nav-select-regextype";
