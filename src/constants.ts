@@ -132,7 +132,7 @@ export const REGEX_TYPES = {
       REGEXTRACT_RENDER_TYPE.FRONT_BACK
     ),
     'MINIMAL_TASKS': new RegexType(
-      '^[ ]*- \\[(.)\\][ ]*(.*)',
+      '^[ \\t]*- \\[(.)\\][ ]*(.*)',
       REGEXTRACT_TYPE.TASK.name,
       true,
       ['total', 'label', 'content'],
@@ -142,7 +142,7 @@ export const REGEX_TYPES = {
       REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'LIST_CALLOUTS': new RegexType(
-      '^[ ]*- ([&?!~@$§%])[ ]*(.*)',
+      '^[ \\t]*- ([&?!~@$§%])[ ]*(.*)',
       REGEXTRACT_TYPE.CALLOUT.name,
       true,
       ['total', 'label', 'content'],
