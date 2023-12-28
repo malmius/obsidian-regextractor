@@ -115,6 +115,10 @@ export class ParsedExtract {
     }
 
     static normalizeString(str:string): string {
+        // Nur strings länger als 1 normalisieren
+        if (str.length == 1) {
+            return str;
+        }
         return str.replace(/^[^a-zA-Z0-9[#]+|[^a-zA-Z0-9\]]+$/g, '').toLowerCase();
       }
 
