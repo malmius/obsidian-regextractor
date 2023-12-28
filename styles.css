@@ -75,6 +75,10 @@ If your plugin does not need CSS, delete this file.
     padding: 0.5em 0.5em 0.5em 1em;
 }
 
+.markdown-text-title {
+    font-weight: bold;
+}
+
 .nav-action-button {
     display: inline-block;
     padding-right: 10px;
@@ -90,9 +94,9 @@ If your plugin does not need CSS, delete this file.
 }
 
 .regExtractorCard:not([cardtype="regular"])[cardside="front"] {
-    border-right: solid 8px var(--color-accent-1);
+    border-right: solid 6px var(--color-accent-1);
 }
 
 .regExtractorCard:not([cardtype="regular"])[cardside="back"] {
-    border-left: solid 8px var(--color-accent-1);
+    border-left: solid 6px var(--color-accent-1);
 }

@@ -6,6 +6,8 @@ import { getArrayFromText } from "./settings";
 
 enum LAYOUT_TYPE {'TABLE', 'CARD'}
 
+const DEFAULT_REGEXTRACT_DROPDOWN = 'all';
+
 //import { t } from "./lang/helper"
 
 export class RegexExtractorView extends ItemView {
@@ -42,13 +44,13 @@ export class RegexExtractorView extends ItemView {
         // Set Defaults
         const fieldTypeDropDown = document.getElementById("regextractor-nav-select-regextype");
         if (fieldTypeDropDown instanceof HTMLSelectElement) {
-            fieldTypeDropDown.value = 'all';
+            fieldTypeDropDown.value = DEFAULT_REGEXTRACT_DROPDOWN;
         }
 
         const fieldsContainer = document.getElementById('regextractor-container-labels');
         const contentContainer = document.getElementById('regextractor-container-extracts');
         if (fieldsContainer) {
-            this.drawFields(fieldsContainer, fieldTypeDropDown.value); 
+            this.drawFields(fieldsContainer, DEFAULT_REGEXTRACT_DROPDOWN); 
         }
         if (contentContainer) {
             this.drawContent(contentContainer, this.currentLayout);
@@ -112,8 +114,8 @@ export class RegexExtractorView extends ItemView {
         // Field Types
         const regexTypeNames: string[] = getRegexTypeNames();
         const fieldTypeOption = regexTypeSelect.createEl("option");
-        fieldTypeOption.value = 'all';
-        fieldTypeOption.text = 'all';
+        fieldTypeOption.value = DEFAULT_REGEXTRACT_DROPDOWN;
+        fieldTypeOption.text = DEFAULT_REGEXTRACT_DROPDOWN;
         fieldTypeOption.setAttribute("selected", "selected");
         regexTypeNames.forEach((regexTypeName) => {
             const fieldTypeOption = regexTypeSelect.createEl("option");
@@ -308,6 +310,7 @@ export class RegexExtractorView extends ItemView {
         regExtractorCard.setAttribute("labelname", ParsedExtract.normalizeString(extract.getName()));
 
         const extractTypeName = ParsedExtract.normalizeString(extract.getName());
+        const titleString: string | null = extract.getTitle();
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
         const contentIsLong: boolean = contentString.length >= 200;
 
@@ -322,6 +325,18 @@ export class RegexExtractorView extends ItemView {
             const truncatedContentString = contentString.substring(0, 180) + "...";
 
             regExtractorCard.setAttribute("isShortened", "true");
+            
+            // Set title if available
+            if (titleString) {
+                cardMarkdownText.createDiv(("markdown-text-title"), (el: HTMLElement) => {
+                    MarkdownRenderer.render(this.plugin.app
+                        , titleString
+                        , el
+                        , this.plugin.app.workspace.getActiveFile()?.path || ""
+                        , this.plugin
+                        )});
+    
+            }
             cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {
                 MarkdownRenderer.render(this.plugin.app
                     , truncatedContentString
@@ -335,6 +350,17 @@ export class RegexExtractorView extends ItemView {
                 this.toggleShortLong(regExtractorCard, contentString, truncatedContentString);
             }); 
         } else {
+            // Set title if available
+            if (titleString) {
+                cardMarkdownText.createDiv(("markdown-text-title"), (el: HTMLElement) => {
+                    MarkdownRenderer.render(this.plugin.app
+                        , titleString
+                        , el
+                        , this.plugin.app.workspace.getActiveFile()?.path || ""
+                        , this.plugin
+                        )});
+    
+            }
             cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, this.plugin.app.workspace.getActiveFile()?.path || "", this.plugin)});
             // regExtractorCard.innerHTML = contentString;
         }

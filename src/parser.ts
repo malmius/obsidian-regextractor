@@ -114,6 +114,11 @@ export class ParsedExtract {
         }
     }
 
+    getTitle(): string | null {
+        const titleIndex = this.regExType.regExGroups.indexOf('title');
+        return this.matches[titleIndex];
+    }
+
     static normalizeString(str:string): string {
         // Nur strings länger als 1 normalisieren
         if (str.length == 1) {
