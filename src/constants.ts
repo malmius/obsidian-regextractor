@@ -9,7 +9,8 @@ export const REGEXTRACT_TYPE = {
   COMMENT: {name: 'COMMENT', displayName: 'comments', hasLabel: false},
   CALLOUT: {name: 'CALLOUT', displayName: 'callouts', hasLabel: true},
   KEYVALUE: {name: 'KEYVALUE', displayName: 'key value pairs', hasLabel: true},
-  TASK: {name: 'TASK', displayName: 'tasks', hasLabel: true}
+  TASK: {name: 'TASK', displayName: 'tasks', hasLabel: true},
+  QUOTE: {name: 'QUOTE', displayName: 'quotes', hasLabel: false},
 }
 
 export enum REGEXTRACT_RENDER_TYPE {
@@ -150,8 +151,19 @@ export const REGEX_TYPES = {
       2,
       true,
       REGEXTRACT_RENDER_TYPE.REGULAR
+    ),
+    'QUOTES': new RegexType(
+      '> (.*)',
+      REGEXTRACT_TYPE.QUOTE.name,
+      false,
+      ['total', 'content'],
+      -1,
+      1,
+      true,
+      REGEXTRACT_RENDER_TYPE.REGULAR
     )
   };
+
 
 
 export function getRegexTypeNames(): string[] {

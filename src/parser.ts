@@ -120,6 +120,9 @@ export class ParsedExtract {
     }
 
     static normalizeString(str:string): string {
+        if (!str) {
+            return str;
+        }
         // Nur strings länger als 1 normalisieren
         if (str.length == 1) {
             return str;

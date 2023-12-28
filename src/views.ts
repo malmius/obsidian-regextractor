@@ -1,4 +1,4 @@
-import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile } from "obsidian";
+import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile, Notice } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
 import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getRegexTypesWithLabels, getRegexTypeNames, REGEXTRACT_TYPE, getHasLabelsFromDisplayName, getTypeFromDisplayName } from './constants';
@@ -89,6 +89,9 @@ export class RegexExtractorView extends ItemView {
         const navActionButtonShowAsTable = navigationContainer.createEl("div", "regextractor-nav-action-button");
         navActionButtonShowAsTable.id = 'regextractor-nav-action-button-showastable';
 		setIcon(navActionButtonShowAsTable, "table");
+        const navActionButtonCopyElements = navigationContainer.createEl("div", "regextractor-nav-action-button");
+        navActionButtonCopyElements.id = 'regextractor-nav-action-button-copy';
+		setIcon(navActionButtonCopyElements, "copy");
         const regexTypeSelect = navigationContainer.createEl("select", "regextractor-nav-dropdown");
         regexTypeSelect.id = "regextractor-nav-select-regextype";
 
@@ -111,6 +114,16 @@ export class RegexExtractorView extends ItemView {
                 this.drawContent(containerExtracts, this.currentLayout);
             }
 		});
+
+        navActionButtonCopyElements.addEventListener("click", (event: MouseEvent) => {
+            const elements = document.querySelectorAll('.regExtractorCard[isfiltered="false"] .cardMarkdownText');
+            let elementContents = '';
+            elements.forEach(element => {
+                elementContents += element.textContent + '\n';
+            })
+            navigator.clipboard.writeText(elementContents);
+            new Notice('extracts copied to clipboard');
+        });
 
         // Field Types
         const regexTypeNames: string[] = getRegexTypeNames();
@@ -155,7 +168,6 @@ export class RegexExtractorView extends ItemView {
         const ignoreLabelsArray = getArrayFromText(this.plugin.settings.ignoreFieldsList, ',');
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
-                console.log(element.getAttribute('labelname'))
                 if (selectedType === ''
                     && !ignoreLabelsArray.includes(element.getAttribute('labelname'))) // alle selected types, die nicht gültig sind, zeigen alle Elemente an (z.B. 'all')
                 {
