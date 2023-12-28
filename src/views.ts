@@ -1,7 +1,7 @@
 import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
-import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getFilterableRegexTypes, getRegexTypeNames, REGEXTRACT_TYPE, getHasLabelsFromDisplayName, getTypeFromDisplayName } from './constants';
+import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getRegexTypesWithLabels, getRegexTypeNames, REGEXTRACT_TYPE, getHasLabelsFromDisplayName, getTypeFromDisplayName } from './constants';
 
 enum LAYOUT_TYPE {'TABLE', 'CARD'}
 
@@ -149,12 +149,15 @@ export class RegexExtractorView extends ItemView {
             if (element instanceof HTMLElement) {
                 // 'all' ist ausgewählt
                 if (selectedType == 'all') {
+                    element.setAttribute("isfiltered", "false");
                     element.style.display = 'grid';
                     return;
                 }
-                if (element.getAttribute('regextype') == selectedType) {
+                if (element.getAttribute('regextype') === selectedType) {
+                    element.setAttribute("isfiltered", "false");
                     element.style.display = 'grid';
                 } else {
+                    element.setAttribute("isfiltered", "true");
                     element.style.display = 'none';
                 }
             }
@@ -167,7 +170,7 @@ export class RegexExtractorView extends ItemView {
         }
         const selectedPillsElements = document.querySelectorAll('.fieldElement.selectedPill');
         const selectedFieldNames = Array.from(selectedPillsElements).map(element => element.getAttribute("fieldname"));
-        const elements = document.querySelectorAll('.regExtractorCard');
+        const elements = document.querySelectorAll('.regExtractorCard[isfiltered="false"]');
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
                 if (selectedFieldNames.length == 0 || selectedFieldNames.includes(element.getAttribute("extractlabel"))) {
@@ -182,7 +185,7 @@ export class RegexExtractorView extends ItemView {
     protected async drawFields(parentElement: Element) {
         parentElement.innerHTML = '';
 
-        const regexTypes = getFilterableRegexTypes();
+        const regexTypes = getRegexTypesWithLabels();
 
         regexTypes.forEach(async (type) => {
             const parser = new Parser(this.plugin);

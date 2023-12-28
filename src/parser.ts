@@ -102,10 +102,11 @@ export class ParsedExtract {
     }
 
     getName() {
-        if (this.regExType.titleGroupIndex == -1) {
-            return this.regExType.type;
+        if (this.regExType.hasLabels == false) {
+            return this.regExType.type.toLowerCase();
         } else {
-            return this.matches[this.regExType.titleGroupIndex];
+            const labelIndex = this.regExType.regExGroups.indexOf('label');
+            return this.matches[labelIndex];
         }
     }
 
