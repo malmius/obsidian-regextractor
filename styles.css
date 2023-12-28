@@ -10,8 +10,13 @@ If your plugin does not need CSS, delete this file.
 /** NAVIGATION **/
 
 .regextractor-container-nav {
-    background-color: pink;
-    display: grid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+}
+
+.regextractor-nav-action-button, .regextractor-nav-dropdown {
 }
 
 /** LABELS **/
@@ -45,16 +50,17 @@ If your plugin does not need CSS, delete this file.
     grid-template-rows: 1fr; 
     gap: 0px 0px; 
     grid-template-areas: 
-          "content content type"
+          "content content label"
+          "content content info"
 }
 
-.extractTypeNameTag {
+.regExtractorCardLabelArea {
     display: inline;
     font-size: 0.7em;
     color: var(--text-accent);
     /* background: var(--background-modifier-active-hover); */
     padding: 0.3em 0.5em;
-    grid-area: type;
+    grid-area: label;
     text-align: right;
 }
 

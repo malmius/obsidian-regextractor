@@ -284,9 +284,9 @@ export class RegexExtractorView extends ItemView {
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
         const contentIsLong: boolean = contentString.length >= 200;
 
-        const extractTypeNameTag = regExtractorCard.createEl("div", "extractTypeNameTag");
-        extractTypeNameTag.addClass("extractTypeNameTag");
-        extractTypeNameTag.textContent = extractTypeName;
+        const regExtractorCardLabelArea = regExtractorCard.createEl("div", "regExtractorCardLabelArea");
+        regExtractorCardLabelArea.addClass("regExtractorCardLabelArea");
+        regExtractorCardLabelArea.textContent = extractTypeName;
 
         const cardMarkdownText = regExtractorCard.createEl("div", "cardMarkdownText");
         cardMarkdownText.addClass("cardMarkdownText");
@@ -355,9 +355,9 @@ export class RegexExtractorView extends ItemView {
         const frontContentString = extract.getMatchByGroupname('FrontContent');
         const backContentString = extract.getMatchByGroupname('BackContent');
 
-        const extractTypeNameTag = regExtractorCard.createEl("div", "extractTypeNameTag");
-        extractTypeNameTag.addClass("extractTypeNameTag");
-        extractTypeNameTag.textContent = extractTypeName;
+        const regExtractorCardLabelArea = regExtractorCard.createEl("div", "regExtractorCardLabelArea");
+        regExtractorCardLabelArea.addClass("regExtractorCardLabelArea");
+        regExtractorCardLabelArea.textContent = extractTypeName;
 
         const cardMarkdownText = regExtractorCard.createEl("div", "cardMarkdownText");
         cardMarkdownText.addClass("cardMarkdownText");
@@ -367,17 +367,17 @@ export class RegexExtractorView extends ItemView {
         // Toggle between front and back
         regExtractorCard.addEventListener("click", (event: MouseEvent) => {
             cardMarkdownText.innerHTML = '';
-            const extractTypeNameTag = regExtractorCard.querySelector('.extractTypeNameTag')
+            const regExtractorCardLabelArea = regExtractorCard.querySelector('.regExtractorCardLabelArea')
             if (regExtractorCard.getAttribute("cardSide") == "front") {
                 regExtractorCard.setAttribute("cardSide", "back");
-                if (extractTypeNameTag instanceof HTMLElement) {
-                    extractTypeNameTag.innerHTML = backLabelString;
+                if (regExtractorCardLabelArea instanceof HTMLElement) {
+                    regExtractorCardLabelArea.innerHTML = backLabelString;
                 }
                 cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, backContentString, el, this.plugin.app.workspace.getActiveFile()?.path || "", this.plugin)});
             } else {
                 regExtractorCard.setAttribute("cardSide", "front");   
-                if (extractTypeNameTag instanceof HTMLElement) {
-                    extractTypeNameTag.innerHTML = frontLabelString;
+                if (regExtractorCardLabelArea instanceof HTMLElement) {
+                    regExtractorCardLabelArea.innerHTML = frontLabelString;
                 }                 
                 cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, this.plugin.app.workspace.getActiveFile()?.path || "", this.plugin)});
             }
