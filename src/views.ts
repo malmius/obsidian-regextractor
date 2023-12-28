@@ -38,6 +38,7 @@ export class RegexExtractorView extends ItemView {
         this.loadViewStructure(this.contentEl);
         // Load Specific View Element
         this.reloadRegexExtractorViewDefault();
+        this.refreshParsedExtracts();
     }
 
     reloadRegexExtractorViewDefault() {
@@ -132,7 +133,7 @@ export class RegexExtractorView extends ItemView {
         const fieldsContainer = document.getElementById('regextractor-container-labels');
         const fieldTypeDropDown = document.getElementById('regextractor-nav-select-regextype');
         if (fieldsContainer instanceof HTMLElement && fieldTypeDropDown instanceof HTMLSelectElement) {
-            const fieldTypeDropDownValue = fieldTypeDropDown?.value;
+            const fieldTypeDropDownValue = fieldTypeDropDown.value;
             const regextractTypeHasLabel = getHasLabelsFromDisplayName(fieldTypeDropDownValue);
             if (regextractTypeHasLabel) {
                 fieldsContainer?.setAttribute("ishidden", "false");
@@ -154,6 +155,7 @@ export class RegexExtractorView extends ItemView {
         const ignoreLabelsArray = getArrayFromText(this.plugin.settings.ignoreFieldsList, ',');
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
+                console.log(element.getAttribute('labelname'))
                 if (selectedType === ''
                     && !ignoreLabelsArray.includes(element.getAttribute('labelname'))) // alle selected types, die nicht gültig sind, zeigen alle Elemente an (z.B. 'all')
                 {
@@ -175,9 +177,9 @@ export class RegexExtractorView extends ItemView {
 
     protected filterCardsByLabel() {
         // Test, ob es ein container für labels überhaupt gibt
-        if (document.getElementById('regextractor-container-labels')?.getAttribute("ishidden") == "true") {
-            return;
-        }
+        // if (document.getElementById('regextractor-container-labels')?.getAttribute("ishidden") == "true") {
+        //     return;
+        // }
         // Array mit allen ausgewählten Labels-Elementen
         const selectedLabelsElements = document.querySelectorAll('.fieldElement.selectedLabel');
         // Array mit allen labelnames Attributen der Label-Elemente

@@ -47,9 +47,9 @@ If your plugin does not need CSS, delete this file.
 
 .regExtractorCard {
     background-color: var(--background-primary);
-    box-shadow: var(--background-modifier-box-shadow) 1px 1px 2px;
+    box-shadow: var(--background-modifier-box-shadow) 0px 2px 4px;
     border-radius: 5px;
-    margin-top: 10px;
+    margin-top: 13px;
     display: grid; 
     grid-template-columns: 1fr 1.4fr 0.6fr; 
     grid-template-rows: 1fr; 
