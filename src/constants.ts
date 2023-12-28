@@ -8,7 +8,8 @@ export const REGEXTRACT_TYPE = {
   QA: {name: 'QA', displayName: 'question & answers', hasLabel: false},
   COMMENT: {name: 'COMMENT', displayName: 'comments', hasLabel: false},
   CALLOUT: {name: 'CALLOUT', displayName: 'callouts', hasLabel: true},
-  KEYVALUE: {name: 'KEYVALUE', displayName: 'key value pairs', hasLabel: true}
+  KEYVALUE: {name: 'KEYVALUE', displayName: 'key value pairs', hasLabel: true},
+  TASK: {name: 'TASK', displayName: 'tasks', hasLabel: true}
 }
 
 export enum REGEXTRACT_RENDER_TYPE {
@@ -129,8 +130,29 @@ export const REGEX_TYPES = {
       3,
       true,
       REGEXTRACT_RENDER_TYPE.FRONT_BACK
+    ),
+    'MINIMAL_TASKS': new RegexType(
+      '^[ ]*- \\[(.)\\][ ]*(.*)',
+      REGEXTRACT_TYPE.TASK.name,
+      true,
+      ['total', 'label', 'content'],
+      1, 
+      2,
+      true,
+      REGEXTRACT_RENDER_TYPE.REGULAR
+    ),
+    'LIST_CALLOUTS': new RegexType(
+      '^[ ]*- ([&?!~@$§%])[ ]*(.*)',
+      REGEXTRACT_TYPE.CALLOUT.name,
+      true,
+      ['total', 'label', 'content'],
+      1,
+      2,
+      true,
+      REGEXTRACT_RENDER_TYPE.REGULAR
     )
   };
+
 
 export function getRegexTypeNames(): string[] {
     /**
