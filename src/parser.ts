@@ -23,13 +23,17 @@ export class Parser {
         return parsedExtracts;
     }
 
-    async getDistinctFieldNames(fieldsArray: ParsedExtract[]): Promise<string[]> {
-        const distinctFieldNames: string[] = [];
+    async getDistinctFieldNames(fieldsArray: ParsedExtract[]) {
+        const distinctFieldNames = {};
         fieldsArray.forEach((regexExtract) => {
+            const type = regexExtract.regExType.type;
+            if (!distinctFieldNames[type]) {
+                distinctFieldNames[type] = [];
+            }
             const fieldName = ParsedExtract.normalizeString(regexExtract.getName());
-            if (!distinctFieldNames.includes(fieldName)) {
-                    distinctFieldNames.push(fieldName);
-                }
+            if (!distinctFieldNames[type].includes(fieldName)) {
+                distinctFieldNames[type].push(fieldName);
+            }
         })
         return distinctFieldNames;
     }

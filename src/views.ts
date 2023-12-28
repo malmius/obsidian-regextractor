@@ -37,19 +37,19 @@ export class RegexExtractorView extends ItemView {
     }
 
     reloadRegexExtractorViewDefault() {
-        const fieldsContainer = document.getElementById('regextractor-container-labels');
-        const contentContainer = document.getElementById('regextractor-container-extracts');
-        if (fieldsContainer) {
-            this.drawFields(fieldsContainer); 
-        }
-        if (contentContainer) {
-            this.drawContent(contentContainer, this.currentLayout);
-        }
-
         // Set Defaults
         const fieldTypeDropDown = document.getElementById("regextractor-nav-select-regextype");
         if (fieldTypeDropDown instanceof HTMLSelectElement) {
             fieldTypeDropDown.value = 'all';
+        }
+
+        const fieldsContainer = document.getElementById('regextractor-container-labels');
+        const contentContainer = document.getElementById('regextractor-container-extracts');
+        if (fieldsContainer) {
+            this.drawFields(fieldsContainer, fieldTypeDropDown.value); 
+        }
+        if (contentContainer) {
+            this.drawContent(contentContainer, this.currentLayout);
         }
 
         // Keine ausgewählten Pills
@@ -130,12 +130,12 @@ export class RegexExtractorView extends ItemView {
             if (regextractTypeHasLabel) {
                 fieldsContainer?.setAttribute("ishidden", "false");
                 fieldsContainer.style.display = 'block';
+                this.drawFields(fieldsContainer, fieldTypeDropDownValue);
             } else {
                 fieldsContainer?.setAttribute("ishidden", "true");
                 fieldsContainer.style.display = 'none';
             }
             const type = getTypeFromDisplayName(fieldTypeDropDownValue)
-            console.log('type: ' + type)
             this.filterCardsByType(getTypeFromDisplayName(fieldTypeDropDownValue));
             this.filterCardsByLabel();
         }
@@ -145,7 +145,6 @@ export class RegexExtractorView extends ItemView {
     protected filterCardsByType(selectedType:string) {
         const elements = document.querySelectorAll('.regExtractorCard');
         elements.forEach(function(element) {
-            console.log('regextype of element: ' + element.getAttribute('regextype'));
             if (element instanceof HTMLElement) {
                 // 'all' ist ausgewählt
                 if (selectedType == 'all') {
@@ -182,7 +181,7 @@ export class RegexExtractorView extends ItemView {
         })
     }
 
-    protected async drawFields(parentElement: Element) {
+    protected async drawFields(parentElement: Element, fieldTypeDropDownValue: string) {
         parentElement.innerHTML = '';
 
         const regexTypes = getRegexTypesWithLabels();
@@ -191,18 +190,28 @@ export class RegexExtractorView extends ItemView {
             const parser = new Parser(this.plugin);
             const fieldsMatches = await parser.parseFields(type);
             const distinctFieldnames = await parser.getDistinctFieldNames(fieldsMatches);
-            let distinctFieldnamesAfterSettings:string[] = distinctFieldnames;
+            // let distinctFieldnamesAfterSettings = distinctFieldnames;
 
             try {
                 const settingsIgnoreFields = this.plugin.settings.ignoreFieldsList.split(',');
-                distinctFieldnamesAfterSettings = distinctFieldnames.filter(fieldName => !settingsIgnoreFields.includes(fieldName));
+                for (const key of Object.keys(distinctFieldnames)) {
+                    distinctFieldnames[key].filter(fieldName => !settingsIgnoreFields.includes(fieldName));
+                }
+                // distinctFieldnamesAfterSettings = distinctFieldnames.filter(fieldName => !settingsIgnoreFields.includes(fieldName));
             } catch (error) {
                 console.log('cant split settings string.');
             } finally {
-                distinctFieldnamesAfterSettings.forEach((fieldname: string) => {
-                    const fieldPill = this.makePill(fieldname);
-                    parentElement.appendChild(fieldPill);
-                })
+                for (const key of Object.keys(distinctFieldnames)) {
+                    console.log(key)
+                    console.log(fieldTypeDropDownValue)
+                    console.log(getTypeFromDisplayName(fieldTypeDropDownValue))
+                    if (key === getTypeFromDisplayName(fieldTypeDropDownValue)) {
+                        distinctFieldnames[key].forEach((fieldname: string) => {
+                            const fieldPill = this.makePill(fieldname);
+                            parentElement.appendChild(fieldPill);
+                        })
+                    }
+                }
             }
         })
 
