@@ -200,15 +200,26 @@ export class RegexExtractorView extends ItemView {
             const distinctFieldnames = await parser.getDistinctFieldNames(fieldsMatches);
             // let distinctFieldnamesAfterSettings = distinctFieldnames;
 
-            try {
-                const settingsIgnoreFields = this.plugin.settings.ignoreFieldsList.split(',');
-                for (const key of Object.keys(distinctFieldnames)) {
-                    distinctFieldnames[key].filter(fieldName => !settingsIgnoreFields.includes(fieldName));
+            // Get ignore Fields from Settings
+            let settingsIgnoreFieldsArray: string[] = []
+            const settingsIgnoreFieldsString = this.plugin.settings.ignoreFieldsList;
+            if (settingsIgnoreFieldsString != '') {
+                if (settingsIgnoreFieldsString.contains(',')) {
+                    settingsIgnoreFieldsArray = settingsIgnoreFieldsString.split(',')
                 }
-                // distinctFieldnamesAfterSettings = distinctFieldnames.filter(fieldName => !settingsIgnoreFields.includes(fieldName));
-            } catch (error) {
-                console.log('cant split settings string.');
-            } finally {
+                else {
+                    settingsIgnoreFields.push(settingsIgnoreFieldsString)
+                }
+            }
+
+            // Filtere nach den Ignore Fields
+            for (const key of Object.keys(distinctFieldnames)) {
+                const fieldsArrayPerType: string[] = distinctFieldnames[key];
+                const filteredArray = fieldsArrayPerType.filter(fieldName => !settingsIgnoreFieldsArray.includes(fieldName));
+                distinctFieldnames[key] = filteredArray;
+            }
+
+            // Create Elements für jedes Field
                 for (const key of Object.keys(distinctFieldnames)) {
                     if (key === getTypeFromDisplayName(fieldTypeDropDownValue)) {
                         distinctFieldnames[key].forEach((fieldname: string) => {
@@ -217,7 +228,6 @@ export class RegexExtractorView extends ItemView {
                         })
                     }
                 }
-            }
         })
 
     }
