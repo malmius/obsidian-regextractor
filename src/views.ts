@@ -55,7 +55,7 @@ export class RegexExtractorView extends ItemView {
         // Keine ausgewählten Pills
         const fieldElement = document.querySelectorAll('.fieldElement');
         fieldElement.forEach(element => {
-            element.removeClass('selectedPill');
+            element.removeClass('selectedLabel');
         });
 
         this.refreshParsedExtracts();
@@ -135,7 +135,6 @@ export class RegexExtractorView extends ItemView {
                 fieldsContainer?.setAttribute("ishidden", "true");
                 fieldsContainer.style.display = 'none';
             }
-            const type = getTypeFromDisplayName(fieldTypeDropDownValue)
             this.filterCardsByType(getTypeFromDisplayName(fieldTypeDropDownValue));
             this.filterCardsByLabel();
         }
@@ -146,8 +145,8 @@ export class RegexExtractorView extends ItemView {
         const elements = document.querySelectorAll('.regExtractorCard');
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
-                // 'all' ist ausgewählt
-                if (selectedType == 'all') {
+                if (selectedType === '') // alle selected types, die nicht gültig sind, zeigen alle Elemente an (z.B. 'all')
+                {
                     element.setAttribute("isfiltered", "false");
                     element.style.display = 'grid';
                     return;
@@ -164,15 +163,20 @@ export class RegexExtractorView extends ItemView {
     }
 
     protected filterCardsByLabel() {
+        // Test, ob es ein container für labels überhaupt gibt
         if (document.getElementById('regextractor-container-labels')?.getAttribute("ishidden") == "true") {
             return;
         }
-        const selectedPillsElements = document.querySelectorAll('.fieldElement.selectedPill');
-        const selectedFieldNames = Array.from(selectedPillsElements).map(element => element.getAttribute("fieldname"));
+        // Array mit allen ausgewählten Labels-Elementen
+        const selectedLabelsElements = document.querySelectorAll('.fieldElement.selectedLabel');
+        // Array mit allen labelnames Attributen der Label-Elemente
+        const selectedFieldNames = Array.from(selectedLabelsElements).map(element => element.getAttribute("labelname"));
+        // Alle Card Elemente, die nicht gefiltert sind (durch den Typ)
         const elements = document.querySelectorAll('.regExtractorCard[isfiltered="false"]');
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
-                if (selectedFieldNames.length == 0 || selectedFieldNames.includes(element.getAttribute("extractlabel"))) {
+                if (selectedFieldNames.length == 0 // keine Labels ausgewählt = alle anzeigen
+                    || selectedFieldNames.includes(element.getAttribute("labelname"))) {
                     element.style.display = 'grid';
                 } else {
                     element.style.display = 'none';
@@ -202,12 +206,9 @@ export class RegexExtractorView extends ItemView {
                 console.log('cant split settings string.');
             } finally {
                 for (const key of Object.keys(distinctFieldnames)) {
-                    console.log(key)
-                    console.log(fieldTypeDropDownValue)
-                    console.log(getTypeFromDisplayName(fieldTypeDropDownValue))
                     if (key === getTypeFromDisplayName(fieldTypeDropDownValue)) {
                         distinctFieldnames[key].forEach((fieldname: string) => {
-                            const fieldPill = this.makePill(fieldname);
+                            const fieldPill = this.createLabelElement(fieldname);
                             parentElement.appendChild(fieldPill);
                         })
                     }
@@ -275,13 +276,13 @@ export class RegexExtractorView extends ItemView {
             })
         }
 
-    makePill(fieldname: string): Element {
+    createLabelElement(labelname: string): Element {
         const fieldElement = createEl("div", "fieldElement");
-        fieldElement.setAttribute("fieldname", fieldname);
-        fieldElement.innerHTML = fieldname;
+        fieldElement.setAttribute("labelname", labelname);
+        fieldElement.innerHTML = labelname;
 
         fieldElement.addEventListener('click', () => {
-            fieldElement.classList.toggle('selectedPill');
+            fieldElement.classList.toggle('selectedLabel');
             this.filterCardsByLabel();
         })
 
@@ -294,8 +295,7 @@ export class RegexExtractorView extends ItemView {
         regExtractorCard.addClass('regExtractorCard');
         regExtractorCard.setAttribute("cardType", "regular");
         regExtractorCard.setAttribute("isShortened", "false");
-        regExtractorCard.setAttribute("extractlabel", ParsedExtract.normalizeString(extract.getName()));
-        
+        regExtractorCard.setAttribute("labelname", ParsedExtract.normalizeString(extract.getName()));
 
         const extractTypeName = ParsedExtract.normalizeString(extract.getName());
         const contentString = extract.matches[extract.regExType.contentGroupIndex];
@@ -350,6 +350,7 @@ export class RegexExtractorView extends ItemView {
         const regExtractorCard = document.createElement("div");
         regExtractorCard.addClass('regExtractorCard');
         regExtractorCard.setAttribute("isShortened", "false");
+        regExtractorCard.setAttribute("labelname", ParsedExtract.normalizeString(extract.getName()));
         regExtractorCard.setAttribute("cardType", "qa");
         regExtractorCard.setAttribute("cardSide", "front");
 

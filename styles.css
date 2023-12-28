@@ -81,8 +81,8 @@ If your plugin does not need CSS, delete this file.
     /* transform: rotateY(180deg); */
 }
 
-.selectedPill {
-    background-color: var(--color-accent-1);
+.selectedLabel {
+    background-color: var(--color-accent-2);
 }
 
 .regExtractorCard:not([cardtype="regular"])[cardside="front"] {
