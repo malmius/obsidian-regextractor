@@ -2,6 +2,7 @@ import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile } from "obsid
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
 import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getRegexTypesWithLabels, getRegexTypeNames, REGEXTRACT_TYPE, getHasLabelsFromDisplayName, getTypeFromDisplayName } from './constants';
+import { getArrayFromText } from "./settings";
 
 enum LAYOUT_TYPE {'TABLE', 'CARD'}
 
@@ -147,15 +148,19 @@ export class RegexExtractorView extends ItemView {
 
     protected filterCardsByType(selectedType:string) {
         const elements = document.querySelectorAll('.regExtractorCard');
+        // Array mit allen labels die man ignorieren soll aus den Settings
+        const ignoreLabelsArray = getArrayFromText(this.plugin.settings.ignoreFieldsList, ',');
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
-                if (selectedType === '') // alle selected types, die nicht gültig sind, zeigen alle Elemente an (z.B. 'all')
+                if (selectedType === ''
+                    && !ignoreLabelsArray.includes(element.getAttribute('labelname'))) // alle selected types, die nicht gültig sind, zeigen alle Elemente an (z.B. 'all')
                 {
                     element.setAttribute("isfiltered", "false");
                     element.style.display = 'grid';
                     return;
                 }
-                if (element.getAttribute('regextype') === selectedType) {
+                if (element.getAttribute('regextype') === selectedType
+                    && !ignoreLabelsArray.includes(element.getAttribute('labelname'))) {
                     element.setAttribute("isfiltered", "false");
                     element.style.display = 'grid';
                 } else {
@@ -201,21 +206,12 @@ export class RegexExtractorView extends ItemView {
             // let distinctFieldnamesAfterSettings = distinctFieldnames;
 
             // Get ignore Fields from Settings
-            let settingsIgnoreFieldsArray: string[] = []
-            const settingsIgnoreFieldsString = this.plugin.settings.ignoreFieldsList;
-            if (settingsIgnoreFieldsString != '') {
-                if (settingsIgnoreFieldsString.contains(',')) {
-                    settingsIgnoreFieldsArray = settingsIgnoreFieldsString.split(',')
-                }
-                else {
-                    settingsIgnoreFields.push(settingsIgnoreFieldsString)
-                }
-            }
+            const ignoreLabelsArray = getArrayFromText(this.plugin.settings.ignoreFieldsList, ',');
 
             // Filtere nach den Ignore Fields
             for (const key of Object.keys(distinctFieldnames)) {
                 const fieldsArrayPerType: string[] = distinctFieldnames[key];
-                const filteredArray = fieldsArrayPerType.filter(fieldName => !settingsIgnoreFieldsArray.includes(fieldName));
+                const filteredArray = fieldsArrayPerType.filter(fieldName => !ignoreLabelsArray.includes(fieldName));
                 distinctFieldnames[key] = filteredArray;
             }
 

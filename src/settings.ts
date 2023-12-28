@@ -49,3 +49,16 @@ export class RegexEctractorPluginSettingsTab extends PluginSettingTab {
             })
         )}
 }
+
+export function getArrayFromText(text:string, separator:string): string[] {
+    let valuesArray: string[] = []
+    if (text != '') {
+        if (text.contains(',')) {
+            valuesArray = text.split(separator);
+        }
+        else {
+            valuesArray.push(text);
+        }
+    }
+    return valuesArray;
+}
