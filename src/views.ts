@@ -359,6 +359,13 @@ export class RegexExtractorView extends ItemView {
                     , this.plugin
                     )});
 
+            cardMarkdownInfo.createDiv(("extract-line"), (el: HTMLElement) => {
+                el.textContent = String(extract.lineNumber)
+                el.addEventListener("click", (event) => {
+                    this.plugin.app.workspace.getLeaf().view.setEphemeralState({line: extract.lineNumber});
+                })
+            });
+            
             // Toggle between shortened and long version
             regExtractorCard.addEventListener("click", (event: MouseEvent) => {
                 this.toggleShortLong(regExtractorCard, contentString, truncatedContentString);
