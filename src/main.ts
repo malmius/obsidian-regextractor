@@ -24,15 +24,13 @@ export default class RegexExtractorPlugin extends Plugin {
 		});
 
 		// This creates an icon in the left ribbon.
-		const ribbonIconElGlobal = this.addRibbonIcon('scroll', 'Regex Extractor Plugin Global', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			// new Notice('This should open the Regex Extractor View');
-			this.activateGlobalView();
-		});
+		// const ribbonIconElGlobal = this.addRibbonIcon('scroll', 'Regex Extractor Plugin Global', (evt: MouseEvent) => {
+		// 	this.activateGlobalView();
+		// });
 
 		// Spezifische View registrieren
 		this.registerView(VIEW_TYPES.DEFAULT_VIEW, (leaf) => new RegexExtractorView(leaf, this));
-		this.registerView(VIEW_TYPES.DEFAULT_VIEW_GLOBAL, (leaf) => new RegextractorDateView(leaf, this));
+		// this.registerView(VIEW_TYPES.DEFAULT_VIEW_GLOBAL, (leaf) => new RegextractorDateView(leaf, this));
 
 		// Wenn eine neue View geöffnet wird, wird die View aktualisiert
 		// TEMPLATE: So wie hier sollte man auf die spezifischen Views referenzieren!
