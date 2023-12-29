@@ -4,6 +4,7 @@ import { Parser, ParsedExtract } from "./parser";
 import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getRegexTypesWithLabels, getRegexTypeNames, REGEXTRACT_TYPE, getHasLabelsFromDisplayName, getTypeFromDisplayName } from './constants';
 import { getArrayFromText } from "./settings";
 import { LAYOUT_TYPE, DEFAULT_REGEXTRACT_DROPDOWN } from "./constants";
+import { searchExtracts } from "./views/search";
 
 //import { t } from "./lang/helper"
 
@@ -28,8 +29,6 @@ export class RegexExtractorView extends ItemView {
 
     // Wird verwendet beim Öffnen der View
     protected async onOpen(): Promise<void> {
-
-        // console.log(this.getViewType());
 
         // Load Basic View Elements (Buttons, Divs)
         this.loadViewStructure(this.contentEl);
@@ -76,16 +75,20 @@ export class RegexExtractorView extends ItemView {
         const contentContainer = viewContent.createEl('div', "regextractor-container-extracts")
         contentContainer.id = 'regextractor-container-extracts'
 
-        // add icon for refresh
-		const navActionButtonRefresh = navigationContainer.createEl("div", "regextractor-nav-action-button");
+        // navigation
+        const navActionButtonContainer = navigationContainer.createEl("div", "regextractor-nav-action-button-container");
+		const navActionButtonRefresh = navActionButtonContainer.createEl("div", "regextractor-nav-action-button");
         navActionButtonRefresh.id = 'regextractor-nav-action-button-refresh';
 		setIcon(navActionButtonRefresh, "refresh-cw");
-		const navActionButtonShowAsCard = navigationContainer.createEl("div", "regextractor-nav-action-button");
+		const navActionButtonShowAsCard = navActionButtonContainer.createEl("div", "regextractor-nav-action-button");
         navActionButtonShowAsCard.id = 'regextractor-nav-action-button-showascard';
 		setIcon(navActionButtonShowAsCard, "panel-top");
-        const navActionButtonCopyElements = navigationContainer.createEl("div", "regextractor-nav-action-button");
+        const navActionButtonCopyElements = navActionButtonContainer.createEl("div", "regextractor-nav-action-button");
         navActionButtonCopyElements.id = 'regextractor-nav-action-button-copy';
 		setIcon(navActionButtonCopyElements, "copy");
+        const regexTypeSearch = navigationContainer.createEl("input", "regextractor-nav-searchinput");
+        regexTypeSearch.id = "regextractor-nav-searchinput";
+        regexTypeSearch.placeholder = "search in extracts..."
         const regexTypeSelect = navigationContainer.createEl("select", "regextractor-nav-dropdown");
         regexTypeSelect.id = "regextractor-nav-select-regextype";
 
@@ -110,6 +113,18 @@ export class RegexExtractorView extends ItemView {
             navigator.clipboard.writeText(elementContents);
             new Notice('extracts copied to clipboard');
         });
+
+        regexTypeSearch.addEventListener("keyup", (event) => {
+            if (event.key === "Enter") {
+                // stelle sicher, dass die extracts bei jeder Suche bereits nach typ und label gefiltert sind
+                this.filterExtracts();
+
+                const inputString = regexTypeSearch.value;
+                if (inputString && inputString != '') {
+                    searchExtracts(inputString);
+                }
+            }
+        })
 
         // Field Types
         const regexTypeNames: string[] = getRegexTypeNames();

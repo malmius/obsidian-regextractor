@@ -17,12 +17,18 @@ If your plugin does not need CSS, delete this file.
     flex-direction: row;
 }
 
-.regextractor-nav-action-button, .regextractor-nav-dropdown {
+.regextractor-nav-action-button-container {
+    display: flex;
 }
 
-#regextractor-nav-action-button-showastable, #regextractor-nav-action-button-showascard {
+.regextractor-nav-action-button {
+    margin: 5px;
+}
+
+#regextractor-nav-action-button-showascard {
     display: none;
 }
+
 
 /** LABELS **/
 
