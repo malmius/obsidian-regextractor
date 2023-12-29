@@ -397,14 +397,14 @@ export class RegexExtractorView extends ItemView {
         if (extract.checkIfGroupnameExists('FrontLabel')) {
             frontLabelString = ParsedExtract.normalizeString(extract.getMatchByGroupname('FrontLabel'));
         } else {
-            frontLabelString = ParsedExtract.normalizeString(extract.getName())
+            frontLabelString = extractTypeName;
         }
 
         let backLabelString:string;
         if (extract.checkIfGroupnameExists('BackLabel')) {
             backLabelString = ParsedExtract.normalizeString(extract.getMatchByGroupname('BackLabel'));
         } else {
-            backLabelString = ParsedExtract.normalizeString(extract.getName())
+            backLabelString = extractTypeName;
         }
 
         const frontContentString = extract.getMatchByGroupname('FrontContent');
@@ -412,7 +412,7 @@ export class RegexExtractorView extends ItemView {
 
         const regExtractorCardLabelArea = regExtractorCard.createEl("div", "regExtractorCardLabelArea");
         regExtractorCardLabelArea.addClass("regExtractorCardLabelArea");
-        regExtractorCardLabelArea.textContent = extractTypeName;
+        regExtractorCardLabelArea.textContent = frontLabelString;
 
         const cardMarkdownText = regExtractorCard.createEl("div", "cardMarkdownText");
         cardMarkdownText.addClass("cardMarkdownText");

@@ -20,7 +20,7 @@ If your plugin does not need CSS, delete this file.
 .regextractor-nav-action-button, .regextractor-nav-dropdown {
 }
 
-#regextractor-nav-action-button-showascard {
+#regextractor-nav-action-button-showastable, #regextractor-nav-action-button-showascard {
     display: none;
 }
 
@@ -100,8 +100,26 @@ If your plugin does not need CSS, delete this file.
     color: var(--icon-color);
 }
 
-.regExtractorCard[cardtype="qa"]:hover {
-    /* transform: rotateY(180deg); */
+.regExtractorCard[cardside="front"] {
+    transition: transform 0.3s;
+    }
+
+.regExtractorCard[cardside="back"] {
+transform: rotateY(180deg);
+transform-origin: center center;
+transition: transform 0.3s;
+}
+
+.regExtractorCard[cardside="back"] > * {
+    transform: rotateY(180deg);
+}
+
+.regExtractorCard[cardside="back"] {
+    display: block;
+}
+
+.regExtractorCard[cardside="back"] > .regExtractorCardInfoArea, .regExtractorCard[cardside="back"] > .regExtractorCardLabelArea {
+    display: none;
 }
 
 .selectedLabel {
