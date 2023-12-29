@@ -44,11 +44,9 @@ export class RegextractorDateView extends ItemView {
         this.parseYearInstances();
         const matches = await this.parseYearInstances();
         const container = document.getElementById('regextractor-year-container');
-        console.log(Object.keys(matches));
 
         for (const key of Object.keys(matches)) {
             if (container) {
-                console.log('container is element')
                 const header = container.createEl("h4");
                 header.textContent = key;
                 const year = container.createEl("p")
