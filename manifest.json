@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-regex-extractor",
-	"name": "Obsidian Regex Extractor",
+	"id": "obsidian-regextractor",
+	"name": "Obsidian Regextractor",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Extracts Content from a File based Regex Queries.",
+	"description": "Display and browse text extarcted from a file based on regular expressions.",
 	"author": "Mandala Malmius",
 	"authorUrl": "",
 	"fundingUrl": "",
