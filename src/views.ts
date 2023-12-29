@@ -3,10 +3,7 @@ import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
 import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getRegexTypesWithLabels, getRegexTypeNames, REGEXTRACT_TYPE, getHasLabelsFromDisplayName, getTypeFromDisplayName } from './constants';
 import { getArrayFromText } from "./settings";
-
-enum LAYOUT_TYPE {'TABLE', 'CARD'}
-
-const DEFAULT_REGEXTRACT_DROPDOWN = 'all';
+import { LAYOUT_TYPE, DEFAULT_REGEXTRACT_DROPDOWN } from "./constants";
 
 //import { t } from "./lang/helper"
 

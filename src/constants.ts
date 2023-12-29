@@ -1,6 +1,12 @@
 export const VIEW_TYPES = {
-    'DEFAULT_VIEW': 'DEFAULT_VIEW'
+    'DEFAULT_VIEW': 'DEFAULT_VIEW',
+    'DEFAULT_VIEW_GLOBAL': 'DEFAULT_VIEW_GLOBAL'
 }
+
+export enum LAYOUT_TYPE {'TABLE', 'CARD', 'LIST'}
+
+export const DEFAULT_REGEXTRACT_DROPDOWN = 'all';
+
 
 export const REGEXTRACT_TYPE = {
   FIELD: {name: 'FIELD', displayName: 'dataview fields', hasLabel: true},
