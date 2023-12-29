@@ -160,7 +160,7 @@ export const REGEX_TYPES = {
       REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'QUOTES': new RegexType(
-      '> (.*)',
+      '^>[^\r\n]*(?:\r?\n(?!\r?\n)[^\r\n]*)*',
       REGEXTRACT_TYPE.QUOTE.name,
       false,
       ['total', 'content'],
