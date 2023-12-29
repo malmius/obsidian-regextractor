@@ -13,7 +13,6 @@ Regular cards show the text of the extract, the type and the corresponding line 
 ### Front and Back Cards
 Front and Back Cards show text in the front and back of the card. When clicking on the card, the card turns around.
 
-![Front Back Card](./assets/front-back-card-display.gif)
 
 ## Extract Types
 
@@ -21,6 +20,8 @@ Depending on what you want to extract, there are different typess.
 
 ### Dataview Fields
 Fields that are written like `(key:: value)`, `[key:: value]` or `key:: value`.
+
+![Dataview Fields Display](./assets/dataview-fields-display.gif)
 
 ### Highlighted Text
 Text between two `==`.
@@ -32,6 +33,8 @@ The current syntax for questions and answers is:
 #Q:: Question
 #A:: Answer
 ```
+
+![Front Back Card](./assets/front-back-card-display.gif)
 
 ### Comments
 Text between two `%%`.
@@ -79,6 +82,7 @@ I usually "annotate" my notes with many symbools (e.g. Dataview Fields, Highligh
 
 ## Known Bugs
 - Overlapping matches: Callouts also start with a ">" character, just like quotes, and are therefore matched multiple times.
+- Multiple Links in Dataview Fields don't get parsed correctly.
 
 ## Disclaimer
 This plugin is in early development. Please make sure to backup your vault when using it.
