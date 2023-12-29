@@ -164,7 +164,7 @@ export class RegexExtractorView extends ItemView {
     protected filterExtracts() {
         // get all extract elements
         const extractElements = document.querySelectorAll('.regExtractorCard');
-
+        
         // get ignored labels in settings
         let ignoredLabelNames: string[] = [];
         if (this.plugin.settings.ignoreFieldsList) {
