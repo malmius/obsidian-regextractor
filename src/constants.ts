@@ -165,8 +165,8 @@ export const REGEX_TYPES = {
       false,
       ['total', 'content'],
       -1,
-      1,
-      true,
+      0,
+      false,
       REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'TAGGED_PARAGRAPHS': new RegexType(

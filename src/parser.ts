@@ -64,7 +64,8 @@ export class Parser {
         if (matches) {
             for (const match of matches) {
                 // console.log("match: " + match);
-                const newExtract = new ParsedExtract(0, regexType, match);
+                const lineNumber = this.getLineNumberOfCharIndex(fileContent, match.index);
+                const newExtract = new ParsedExtract(lineNumber, regexType, match);
                 extracts.push(newExtract);
             }
         }
@@ -87,6 +88,11 @@ export class Parser {
         const activeFile = this.plugin.app.workspace.getActiveFile();
         const activeFileContent = await this.plugin.app.vault.cachedRead(activeFile);
         return activeFileContent;
+    }
+
+    private getLineNumberOfCharIndex(fileContent, charIndex): number {
+        const lines = fileContent.substr(0, charIndex).split('\n');
+        return lines.length;
     }
 }
 
