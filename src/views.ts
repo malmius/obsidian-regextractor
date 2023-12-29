@@ -338,6 +338,15 @@ export class RegexExtractorView extends ItemView {
             regExtractorCard.addEventListener("click", (event: MouseEvent) => {
                 this.toggleShortLong(regExtractorCard, contentString, truncatedContentString);
             }); 
+
+            // Remove with right click
+            regExtractorCard.addEventListener("mousedown", (event: MouseEvent) => {
+                // event.preventDefault();
+                if (event.button === 2) {
+                    regExtractorCard.style.display = "none";
+                }
+            }); 
+
         } else {
             // Set title if available
             if (titleString) {
@@ -362,6 +371,14 @@ export class RegexExtractorView extends ItemView {
                     this.plugin.app.workspace.getLeaf().view.setEphemeralState({line: extract.lineNumber});
                 })
             });
+
+            // Remove with right click
+            regExtractorCard.addEventListener("mousedown", (event: MouseEvent) => {
+                // event.preventDefault();
+                if (event.button === 2) {
+                    regExtractorCard.style.display = "none";
+                }
+            }); 
             // regExtractorCard.innerHTML = contentString;
         }
 
@@ -435,6 +452,14 @@ export class RegexExtractorView extends ItemView {
                     regExtractorCardLabelArea.innerHTML = frontLabelString;
                 }                 
                 cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, frontContentString, el, this.plugin.app.workspace.getActiveFile()?.path || "", this.plugin)});
+            }
+        }); 
+
+        // Remove with right click
+        regExtractorCard.addEventListener("mousedown", (event: MouseEvent) => {
+            // event.preventDefault();
+            if (event.button === 2) {
+                regExtractorCard.style.display = "none";
             }
         }); 
         return regExtractorCard;
