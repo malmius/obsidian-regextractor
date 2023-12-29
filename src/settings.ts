@@ -38,8 +38,8 @@ export class RegexEctractorPluginSettingsTab extends PluginSettingTab {
         // );
 
         new Setting(containerEl)
-        .setName('Ignore Fields')
-        .setDesc('Ignose these DataviewFields from Extractor View')
+        .setName('Ignore Labels')
+        .setDesc('Ignore these Labels from Extractor View (e.g. Dataview Field Keys, Callout Types)')
         .addTextArea(ignoreFieldsList => ignoreFieldsList
             .setValue(this.plugin.settings.ignoreFieldsList)
             .onChange((ignoreFieldsList) => {
@@ -48,6 +48,7 @@ export class RegexEctractorPluginSettingsTab extends PluginSettingTab {
                 this.plugin.app.workspace.trigger("file-open");
             })
         )}
+        
 }
 
 export function getArrayFromText(text:string, separator:string): string[] {
