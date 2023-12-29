@@ -170,7 +170,7 @@ export const REGEX_TYPES = {
       REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'TAGGED_PARAGRAPHS': new RegexType(
-      '^(?!#)(.*)(#\\w+).*$',
+      '^(?!#)(.*)(#\\w+)\\s*$',
       REGEXTRACT_TYPE.PARAGRAPH.name,
       true,
       ['total', 'content', 'label'],
