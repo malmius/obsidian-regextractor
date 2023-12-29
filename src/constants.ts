@@ -11,6 +11,7 @@ export const REGEXTRACT_TYPE = {
   KEYVALUE: {name: 'KEYVALUE', displayName: 'key value pairs', hasLabel: true},
   TASK: {name: 'TASK', displayName: 'tasks', hasLabel: true},
   QUOTE: {name: 'QUOTE', displayName: 'quotes', hasLabel: false},
+  PARAGRAPH: {name: 'PARAGRAPH', displayName: 'paragraphs', hasLabel: true},
 }
 
 export enum REGEXTRACT_RENDER_TYPE {
@@ -161,10 +162,18 @@ export const REGEX_TYPES = {
       1,
       true,
       REGEXTRACT_RENDER_TYPE.REGULAR
+    ),
+    'TAGGED_PARAGRAPHS': new RegexType(
+      '^(?!#)(.*)(#\\w+).*$',
+      REGEXTRACT_TYPE.PARAGRAPH.name,
+      true,
+      ['total', 'content', 'label'],
+      2,
+      1,
+      true,
+      REGEXTRACT_RENDER_TYPE.REGULAR
     )
   };
-
-
 
 export function getRegexTypeNames(): string[] {
     /**
