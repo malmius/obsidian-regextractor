@@ -3,7 +3,7 @@ export const VIEW_TYPES = {
     'DEFAULT_VIEW_GLOBAL': 'DEFAULT_VIEW_GLOBAL'
 }
 
-export enum LAYOUT_TYPE {'TABLE', 'CARD', 'LIST'}
+export enum LAYOUT_TYPE {'CARD', 'LIST'}
 
 export const DEFAULT_REGEXTRACT_DROPDOWN = 'all';
 

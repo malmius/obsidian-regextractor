@@ -83,9 +83,6 @@ export class RegexExtractorView extends ItemView {
 		const navActionButtonShowAsCard = navigationContainer.createEl("div", "regextractor-nav-action-button");
         navActionButtonShowAsCard.id = 'regextractor-nav-action-button-showascard';
 		setIcon(navActionButtonShowAsCard, "panel-top");
-        const navActionButtonShowAsTable = navigationContainer.createEl("div", "regextractor-nav-action-button");
-        navActionButtonShowAsTable.id = 'regextractor-nav-action-button-showastable';
-		setIcon(navActionButtonShowAsTable, "table");
         const navActionButtonCopyElements = navigationContainer.createEl("div", "regextractor-nav-action-button");
         navActionButtonCopyElements.id = 'regextractor-nav-action-button-copy';
 		setIcon(navActionButtonCopyElements, "copy");
@@ -98,14 +95,6 @@ export class RegexExtractorView extends ItemView {
 
         navActionButtonShowAsCard.addEventListener("click", (event: MouseEvent) => {
             this.currentLayout = LAYOUT_TYPE.CARD;
-            const containerExtracts = document.getElementById('regextractor-container-extracts');
-            if (containerExtracts) {
-                this.drawContent(containerExtracts, this.currentLayout);
-            }
-		});
-
-        navActionButtonShowAsTable.addEventListener("click", (event: MouseEvent) => {
-            this.currentLayout = LAYOUT_TYPE.TABLE;
             const containerExtracts = document.getElementById('regextractor-container-extracts');
             if (containerExtracts) {
                 this.drawContent(containerExtracts, this.currentLayout);
@@ -246,30 +235,9 @@ export class RegexExtractorView extends ItemView {
             case LAYOUT_TYPE.CARD:
                 this.drawParsedContentCard(parentElement);
                 break;
-            case LAYOUT_TYPE.TABLE:
-                this.drawParsedContentTable(parentElement);
-                break;
             default:
                 break;
         }
-    }
-
-    protected async drawParsedContentTable(parentElement: Element, filter?: string) {
-        parentElement.innerHTML = '';
-
-        const regexTypes = Object.values(REGEX_TYPES);
-
-        regexTypes.forEach(async (type) => {
-            const parser = new Parser(this.plugin);
-            const fieldsMatches = await parser.parseFields(type);
-            const parsedContentTable = document.createElement("table");
-            fieldsMatches.forEach((fieldmatch) => {
-                const tableRow = this.extractToTableLine(fieldmatch, filter)
-                if (tableRow) {
-                    parsedContentTable.appendChild(tableRow);
-                }})
-            parentElement.appendChild(parsedContentTable);
-        });
     }
 
     protected async drawParsedContentCard(parentElement: Element) {
@@ -484,33 +452,6 @@ export class RegexExtractorView extends ItemView {
                 element.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, textShort, el, this.plugin.app.workspace.getActiveFile()?.path || "", this.plugin)});
             }
         });
-    }
-
-    extractToTableLine(extract: ParsedExtract, filter?: string): Element | null {
-        if (filter) {
-            const filterLowerCase = ParsedExtract.normalizeString(filter);
-            if (!getRegexTypeNames().includes(filterLowerCase)) {
-                const titleString = ParsedExtract.normalizeString(extract.matches[extract.regExType.titleGroupIndex]);
-                if (!titleString.includes(filterLowerCase)) {
-                    return null;
-                }
-            }
-        }
-        const tableRow = document.createElement("tr");
-
-        // linenumber
-        const columnLineNumber = document.createElement("td");
-        columnLineNumber.innerHTML = extract.lineNumber.toString();
-        tableRow.appendChild(columnLineNumber);
-
-        // parsedelement
-        const columnParsedContent = document.createElement("td");
-        const contentString = extract.matches[extract.regExType.contentGroupIndex];
-
-        // columnParsedContent.createSpan("extractor-element-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, this.plugin.app.workspace.getActiveViewOfType(VIEW_TYPES.DEFAULT_VIEW), this.plugin)};
-        columnParsedContent.innerHTML = contentString;
-        tableRow.appendChild(columnParsedContent);
-        return tableRow;
     }
 
 }

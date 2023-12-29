@@ -20,7 +20,7 @@ If your plugin does not need CSS, delete this file.
 .regextractor-nav-action-button, .regextractor-nav-dropdown {
 }
 
-#regextractor-nav-action-button-showastable, #regextractor-nav-action-button-showascard {
+#regextractor-nav-action-button-showascard {
     display: none;
 }
 
