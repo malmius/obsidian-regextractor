@@ -24,18 +24,18 @@ export class RegexEctractorPluginSettingsTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-        new Setting(containerEl)
-        // für locale support, dann in den Strings jeweils t('Parse entire paragraph') nehmen
-        .setName('Parse entire paragraph')
-        .setDesc('Parses entire paragraph until next empty line when matched.')
-        .addToggle(value => value
-            .setValue(this.plugin.settings.parseParagraph)
-            .onChange((value) => {
-                this.plugin.settings.parseParagraph = value;
-                this.plugin.saveSettings();
-                this.plugin.app.workspace.trigger("file-open");
-            })
-        );
+        // new Setting(containerEl)
+        // // für locale support, dann in den Strings jeweils t('Parse entire paragraph') nehmen
+        // .setName('Parse entire paragraph')
+        // .setDesc('Parses entire paragraph until next empty line when matched.')
+        // .addToggle(value => value
+        //     .setValue(this.plugin.settings.parseParagraph)
+        //     .onChange((value) => {
+        //         this.plugin.settings.parseParagraph = value;
+        //         this.plugin.saveSettings();
+        //         this.plugin.app.workspace.trigger("file-open");
+        //     })
+        // );
 
         new Setting(containerEl)
         .setName('Ignore Fields')

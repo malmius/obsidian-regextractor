@@ -166,7 +166,10 @@ export class RegexExtractorView extends ItemView {
         const extractElements = document.querySelectorAll('.regExtractorCard');
 
         // get ignored labels in settings
-        const ignoredLabelNames = getArrayFromText(this.plugin.settings.ignoreFieldsList, ',');
+        let ignoredLabelNames: string[] = [];
+        if (this.plugin.settings.ignoreFieldsList) {
+            ignoredLabelNames = getArrayFromText(this.plugin.settings.ignoreFieldsList, ',');
+        }
 
         // get currently selected type
         let selectedTypeName = '';
@@ -196,7 +199,7 @@ export class RegexExtractorView extends ItemView {
             const labelOfExtractElement = extractElement.getAttribute('labelname') || '';
 
             // First priority: Filter for Elements defined in settings
-            if (ignoredLabelNames.includes(labelOfExtractElement)) {
+            if (ignoredLabelNames.length > 0 && ignoredLabelNames.includes(labelOfExtractElement)) {
                 extractElement.setAttribute("isfiltered", "true");
             }
 
