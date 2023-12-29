@@ -79,6 +79,10 @@ If your plugin does not need CSS, delete this file.
     text-align: right;
 }
 
+.regExtractorCardInfoArea:hover .extract-line::before {
+    content: '►';
+}
+
 .cardMarkdownText {
     font-size: 0.9rem;
     grid-area: content;
