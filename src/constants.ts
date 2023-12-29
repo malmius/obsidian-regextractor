@@ -120,7 +120,7 @@ export const REGEX_TYPES = {
       REGEXTRACT_RENDER_TYPE.REGULAR
     ),
     'OBSIDIAN_CALLOUTS': new RegexType(
-      '^>\\s+\\[!(.*)\\]\\s?(.*)\n^>\\s+(.*)',
+      '^>\\s+\\[!(.*)\\]\\s?(.*)(?:\n^>\\s+(.*))',
       REGEXTRACT_TYPE.CALLOUT.name,
       true,
       ['total', 'label', 'title', 'content'],
