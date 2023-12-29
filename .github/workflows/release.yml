@@ -31,6 +31,3 @@ jobs:
           gh release create "$tag" \
             --title="$tag" \
             --draft \
-          gh release upload "$tag" --c main.js
-          gh release upload "$tag" --c manifest.json
-          gh release upload "$tag" --c styles.css
