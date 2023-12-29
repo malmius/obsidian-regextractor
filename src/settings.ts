@@ -54,7 +54,7 @@ export class RegexEctractorPluginSettingsTab extends PluginSettingTab {
 export function getArrayFromText(text:string, separator:string): string[] {
     let valuesArray: string[] = []
     if (text != '') {
-        if (text.contains(',')) {
+        if (text.includes(',')) {
             valuesArray = text.split(separator);
         }
         else {
