@@ -59,6 +59,14 @@ If your plugin does not need CSS, delete this file.
           "content content info"
 }
 
+.regExtractorCard[isfiltered="true"] {
+    display: none;
+}
+
+.regExtractorCard[isfiltered="false"] {
+    display: grid;
+}
+
 .regExtractorCardLabelArea {
     display: inline;
     font-size: 0.7rem;

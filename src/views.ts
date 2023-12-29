@@ -142,9 +142,71 @@ export class RegexExtractorView extends ItemView {
                 fieldsContainer?.setAttribute("ishidden", "true");
                 fieldsContainer.style.display = 'none';
             }
-            this.filterCardsByType(getTypeFromDisplayName(fieldTypeDropDownValue));
-            this.filterCardsByLabel();
+            this.filterExtracts()
+            // this.filterCardsByType(getTypeFromDisplayName(fieldTypeDropDownValue));
+            // this.filterCardsByLabel();
         }
+    }
+
+    protected filterExtracts() {
+        // get all extract elements
+        const extractElements = document.querySelectorAll('.regExtractorCard');
+
+        // get ignored labels in settings
+        const ignoredLabelNames = getArrayFromText(this.plugin.settings.ignoreFieldsList, ',');
+
+        // get currently selected type
+        let selectedTypeName = '';
+        const fieldTypeDropDown = document.getElementById('regextractor-nav-select-regextype');
+        if (fieldTypeDropDown instanceof HTMLSelectElement) {
+            const fieldTypeDropDownValue = fieldTypeDropDown.value;
+            selectedTypeName = getTypeFromDisplayName(fieldTypeDropDownValue);
+            console.log(selectedTypeName);
+        }
+
+        // get currently selected labels
+        const selectedLabelsElements = document.querySelectorAll('#regextractor-container-labels[ishidden="false"] .fieldElement.selectedLabel');
+        // Array mit allen labelnames Attributen der Label-Elemente
+        const selectedLabelNames = Array.from(selectedLabelsElements).map(element => element.getAttribute("labelname"));
+        console.log(selectedLabelNames);
+        
+        // iteriere über alle Elemente und verstecke die Elemente
+        for (let i = 0; i < extractElements.length; i++) {
+            const extractElement = extractElements[i];
+
+            if (!(extractElement instanceof HTMLElement)) {
+                continue;
+            }
+
+            // Element ist per default sichtbar
+            extractElement.setAttribute("isfiltered", "false");
+            
+            const typeOfExtractElement = extractElement.getAttribute('regextype') || '';
+            const labelOfExtractElement = extractElement.getAttribute('labelname') || '';
+
+            // First priority: Filter for Elements defined in settings
+            if (ignoredLabelNames.includes(labelOfExtractElement)) {
+                extractElement.setAttribute("isfiltered", "true");
+            }
+
+            // Don't filter if dropdown is set to unknown type (e.g. all)
+            if (selectedTypeName === '') {
+                continue;
+            }
+
+            // Filter if extract type is not same as selected type
+            if (typeOfExtractElement !== selectedTypeName) {
+                extractElement.setAttribute("isfiltered", "true");
+            }
+
+            // Filter if label is not the same as selected (in case any label is selected)
+            if (selectedLabelNames.length > 0) {
+                if (!(selectedLabelNames.includes(labelOfExtractElement))) {
+                    extractElement.setAttribute("isfiltered", "true");
+                }
+            }
+        }
+
     }
 
 
@@ -155,7 +217,7 @@ export class RegexExtractorView extends ItemView {
         elements.forEach(function(element) {
             if (element instanceof HTMLElement) {
                 if (selectedType === ''
-                    && !ignoreLabelsArray.includes(element.getAttribute('labelname'))) // alle selected types, die nicht gültig sind, zeigen alle Elemente an (z.B. 'all')
+                    && !ignoreLabelsArray.includes(element.element.getAttribute('labelname'))) // alle selected types, die nicht gültig sind, zeigen alle Elemente an (z.B. 'all')
                 {
                     element.setAttribute("isfiltered", "false");
                     element.style.display = 'grid';
@@ -274,7 +336,8 @@ export class RegexExtractorView extends ItemView {
 
         fieldElement.addEventListener('click', () => {
             fieldElement.classList.toggle('selectedLabel');
-            this.filterCardsByLabel();
+            this.filterExtracts();
+            // this.filterCardsByLabel();
         })
 
         return fieldElement;
