@@ -61,7 +61,7 @@ If your plugin does not need CSS, delete this file.
 
 .regExtractorCardLabelArea {
     display: inline;
-    font-size: 0.7em;
+    font-size: 0.7rem;
     color: var(--text-accent);
     /* background: var(--background-modifier-active-hover); */
     padding: 0.3em 0.5em;
@@ -71,7 +71,7 @@ If your plugin does not need CSS, delete this file.
 
 .regExtractorCardInfoArea {
     display: inline;
-    font-size: 0.7em;
+    font-size: 0.7rem;
     color: var(--text-muted);
     /* background: var(--background-modifier-active-hover); */
     padding: 0.3em 0.5em;
