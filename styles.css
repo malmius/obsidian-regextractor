@@ -69,6 +69,16 @@ If your plugin does not need CSS, delete this file.
     text-align: right;
 }
 
+.regExtractorCardInfoArea {
+    display: inline;
+    font-size: 0.7em;
+    color: var(--text-muted);
+    /* background: var(--background-modifier-active-hover); */
+    padding: 0.3em 0.5em;
+    grid-area: info;
+    text-align: right;
+}
+
 .cardMarkdownText {
     font-size: 0.9rem;
     grid-area: content;

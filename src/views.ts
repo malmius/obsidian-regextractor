@@ -1,4 +1,4 @@
-import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile, Notice } from "obsidian";
+import { WorkspaceLeaf, ItemView, setIcon, MarkdownRenderer, TFile, Notice, MarkdownView, MarkdownPreviewView } from "obsidian";
 import RegexExtractorPlugin from "./main";
 import { Parser, ParsedExtract } from "./parser";
 import { REGEX_TYPES, REGEXTRACT_RENDER_TYPE, VIEW_TYPES, getRegexTypesWithLabels, getRegexTypeNames, REGEXTRACT_TYPE, getHasLabelsFromDisplayName, getTypeFromDisplayName } from './constants';
@@ -332,6 +332,9 @@ export class RegexExtractorView extends ItemView {
         const cardMarkdownText = regExtractorCard.createEl("div", "cardMarkdownText");
         cardMarkdownText.addClass("cardMarkdownText");
 
+        const cardMarkdownInfo = regExtractorCard.createEl("div", "regExtractorCardInfoArea");
+        cardMarkdownInfo.id = 'regExtractorCardInfoArea'
+
         if (contentIsLong) {
             const truncatedContentString = contentString.substring(0, 180) + "...";
 
@@ -372,10 +375,22 @@ export class RegexExtractorView extends ItemView {
                         )});
     
             }
-            cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {MarkdownRenderer.render(this.plugin.app, contentString, el, this.plugin.app.workspace.getActiveFile()?.path || "", this.plugin)});
+            cardMarkdownText.createDiv(("markdown-text"), (el: HTMLElement) => {
+                MarkdownRenderer.render(this.plugin.app
+                    , contentString
+                    , el
+                    , this.plugin.app.workspace.getActiveFile()?.path || ""
+                    , this.plugin)});
+            cardMarkdownInfo.createDiv(("extract-line"), (el: HTMLElement) => {
+                el.textContent = String(extract.lineNumber)
+                el.addEventListener("click", (event) => {
+                    this.plugin.app.workspace.getLeaf().view.setEphemeralState({line: extract.lineNumber});
+                })
+            });
             // regExtractorCard.innerHTML = contentString;
         }
 
+        // Event Listener for Clicking on Internal Links
         const linksInCard = regExtractorCard.querySelectorAll('.markdown-text a.internal-link');
         if (linksInCard) {
             linksInCard.forEach(link => {
