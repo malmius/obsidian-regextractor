@@ -7,6 +7,10 @@ If your plugin does not need CSS, delete this file.
 
 */
 
+.workspace-leaf-content[data-type="DEFAULT_VIEW"],  .workspace-leaf-content[data-type="DEFAULT_VIEW"] .view-content {
+    padding-top: 0px;
+}
+
 /** NAVIGATION **/
 
 .regextractor-container-nav {
@@ -15,6 +19,13 @@ If your plugin does not need CSS, delete this file.
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0px;
+    padding: 16px;
+    width: 100% + 16px;
+    background-color: inherit;
+    margin: 0px -16px 0px -16px;
 }
 
 .regextractor-nav-action-button-container {
@@ -29,7 +40,7 @@ If your plugin does not need CSS, delete this file.
     display: none;
 }
 
-#regextractor-nav-searchinput {
+#regextractor-nav-searchinput, #regextractor-nav-select-regextype {
     -webkit-app-region: no-drag;
     height: var(--input-height);
     font-size: var(--font-ui-small);
@@ -40,7 +51,7 @@ If your plugin does not need CSS, delete this file.
     padding: 0 1.9em 0 0.8em;
     max-width: 100%;
     box-sizing: border-box;
-    margin: 0;
+    margin: 5px;
     border: 0;
     box-shadow: var(--input-shadow);
     border-radius: var(--input-radius);

@@ -1,8 +1,5 @@
-import { MarkdownRenderer } from "obsidian";
 import RegexExtractorPlugin from "./main";
-import { REGEX_TYPES, RegexType, getRegexTypeNames} from './constants';
-import { getAPI } from "obsidian-dataview";
-import { title } from "process";
+import { RegexType } from './constants';
 
 export class Parser {
 	public plugin: RegexExtractorPlugin;
@@ -12,7 +9,7 @@ export class Parser {
 	}
 
     async parseFields(regexType: RegexType): Promise<ParsedExtract[]> {
-        let parsedExtracts: Promise<ParsedExtract[]>;
+        let parsedExtracts: Promise<ParsedExtract[]> | ParsedExtract[];
         if (regexType.matchByLine) {
             const fileLines = await this.getLinesOfActiveFile();
             parsedExtracts = this.returnFieldMatchesByLine(regexType, fileLines);
@@ -24,6 +21,7 @@ export class Parser {
     }
 
     async getDistinctFieldNames(fieldsArray: ParsedExtract[]) {
+        
         const distinctFieldNames = {};
         fieldsArray.forEach((regexExtract) => {
             const type = regexExtract.regExType.type;

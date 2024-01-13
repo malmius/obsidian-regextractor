@@ -18,6 +18,7 @@ export const REGEXTRACT_TYPE = {
   TASK: {name: 'TASK', displayName: 'tasks', hasLabel: true},
   QUOTE: {name: 'QUOTE', displayName: 'quotes', hasLabel: false},
   PARAGRAPH: {name: 'PARAGRAPH', displayName: 'paragraphs', hasLabel: true},
+  FOOTNOTE: {name: 'FOOTNOTE', displayName: 'footnotes', hasLabel: true},
 }
 
 export enum REGEXTRACT_RENDER_TYPE {
@@ -178,8 +179,19 @@ export const REGEX_TYPES = {
       1,
       true,
       REGEXTRACT_RENDER_TYPE.REGULAR
+    ),
+    'FOOTNOTE': new RegexType(
+      '^\\[\\^(.*)\\]: (.*)',
+      REGEXTRACT_TYPE.FOOTNOTE.name,
+      true,
+      ['total', 'label', 'content'],
+      1,
+      2,
+      true,
+      REGEXTRACT_RENDER_TYPE.REGULAR
     )
   };
+
 
 export function getRegexTypeNames(): string[] {
     /**
