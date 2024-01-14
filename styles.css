@@ -24,7 +24,7 @@ If your plugin does not need CSS, delete this file.
     top: 0px;
     padding: 16px;
     width: 100% + 16px;
-    background-color: inherit;
+    background-color: var(--background-secondary);
     margin: 0px -16px 0px -16px;
 }
 
